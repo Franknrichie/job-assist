@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env
+venv/
+ENV/
+
+# VSCode
+.vscode/
+
+# Docker
+*.log
+*.pid
+*.sock
+
+# System
+.DS_Store
+Thumbs.db
+
+# PyCharm
+.idea/
+
+# Postgres volume (optional)
+pgdata/
+
+# Frontend (if using Node later)
+node_modules/
+dist/
+build/
