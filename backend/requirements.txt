@@ -1,2 +1,5 @@
 fastapi
-uvicorn
+uvicorn[standard]
+pdfminer.six
+python-docx
+python-multipart
