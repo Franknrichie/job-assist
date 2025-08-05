@@ -1,3 +1,4 @@
+
 # Job Assist
 
 **Job Assist** is an AI-powered application that helps users evaluate their fit for specific job opportunities and generate tailored cover letters. It compares a user's resume against a job description using natural language reasoning, then outputs a match score, strengths/weaknesses, a summary of fit, and the option to generate a downloadable cover letter.
@@ -17,12 +18,12 @@
   - Summarizes the overall fit in a **single paragraph**
 
 - **Cover Letter Generation**  
-  Users can generate a formal, customized cover letter based on the resume, job description, and AI feedback. The result can be downloaded as `.docx`.
+  Users can generate a formal, customized cover letter based on the resume, job description, and AI feedback. The result can be downloaded as `.docx` (planned for future release).
 
 - **User Authentication (JWT)**  
   Registered users can:
   - Save past evaluations
-  - View match history (job title, score, summary, bullets, cover letter)
+  - View saved results (score, summary, bullet points, cover letter)
   - Generate and store cover letters tied to evaluations
 
 - **Anonymous Use**  
@@ -57,17 +58,15 @@ job-assist/
 
 ## API Endpoints
 
-| Method | Route                   | Auth | Description |
+| Method | Route                    | Auth | Description |
 |--------|--------------------------|------|-------------|
 | POST   | `/upload_resume`         | ❌    | Upload resume file |
 | POST   | `/evaluate_fit`          | ❌    | AI evaluates fit (score + bullets + summary) |
 | POST   | `/register`              | ❌    | Create new user |
 | POST   | `/login`                 | ❌    | Get JWT token |
-| POST   | `/save_evaluation`       | ✅    | Save feedback to user history |
-| GET    | `/history`               | ✅    | Fetch past evaluations |
-| GET    | `/evaluation/{id}`       | ✅    | Get detailed feedback by ID |
-| POST   | `/generate_cover_letter` | ✅    | Generate and store cover letter |
-| GET    | `/download/cover-letter/{id}` | ✅ | Download letter as `.docx` |
+| POST   | `/save_result`           | ✅    | Save evaluation + cover letter |
+| GET    | `/results/{user_id}`     | ✅    | Fetch all saved results |
+| POST   | `/generate_cover_letter` | ✅    | Generate tailored cover letter |
 
 ## Authentication
 
@@ -81,13 +80,21 @@ job-assist/
 - `id`, `email`, `password_hash`, `created_at`
 
 ### Evaluations
-- `id`, `user_id`, `job_title`, `score`, `summary`, `bullets`, `has_cover_letter`, `cover_letter`, `created_at`
+- `id`, `user_id`, `job_description`, `evaluation_result`, `cover_letter`, `created_at`
 
-## Notes
+## Run Locally (Backend Only)
 
-- MVP supports **one job description and resume** at a time
-- Project structured for easy extension (multi-job compare, project inputs, etc.)
-- Evaluation data is saved only if user is authenticated
+```bash
+# Clone and enter the project
+git clone https://github.com/your-username/job-assist.git
+cd job-assist
+
+# Start backend + PostgreSQL with Docker Compose
+docker-compose up --build
+```
+
+The API will be available at `http://localhost:8000`.  
+Test routes via Swagger UI: `http://localhost:8000/docs`
 
 ---
 

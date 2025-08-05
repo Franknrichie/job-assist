@@ -1,0 +1,51 @@
+Full job description
+An AI-powered care ecosystem that integrates therapy, coaching, education, and support—where every AI agent knows how to hold space.
+Description
+Anywhere Clinic – Holistic Healing at Scale, Powered by AI Systems
+We’re building the future of mental health:
+Not just an app.
+A healing system.
+An AI-powered care ecosystem that integrates therapy, coaching, education, and support—where every AI agent knows how to hold space.
+We're not just replacing roles.
+We’re evolving them.
+So that every human on our team—and every patient we serve—gets more time for what matters most: healing, presence, and growth.
+
+Who You Are:
+You’re an AI engineer or systems architect who:
+Knows GPT, LangChain, and vector memory—but also gets what a client in crisis might need
+Believes in automation with empathy
+Builds tools that actually serve human healing, not just productivity
+Has shipped real-world projects, ideally in health, wellness, or creative tech
+Thinks in workflows, not just models—how AI can think, respond, triage, and uplift
+You're not here to optimize clicks.
+You're here to evolve care.
+
+What You’ll Build:
+AI Therapist Assistants: AI guided self-therapy support, intake, journaling, and reflection
+Coaching Agents: Trained to respond to patient scenarios with therapeutic language and safety protocols
+AI-Led Education Tools: Agents that teach core mental health frameworks and mirror human coaching dynamics
+System Automation: Replace admin overhead with thoughtful AI - scheduling, triage, insurance verification, billing
+AI Receptionists that answer with empathy
+Scheduling Optimizers that balance patient schedules to minimize schedule gaps and lower no show rates
+Therapeutic AI Scribes that write notes with assessment and treatment plan output guides for provider and client
+Marketing Outreach Agents that connect former patients and future leads to care
+
+Tech Stack (Flexible, Evolving):
+OpenAI GPT-4 API, LangChain, Pinecone/Weaviate for vector search
+Retrieval Augmented Generation (RAG), memory systems, fine-tuning
+Backend: Python/FastAPI or similar
+Optional: emotion detection, voice transcription, avatar animation
+
+The Offer:
+$100–150k base salary
+Work with visionary doctors, therapists, and thought leaders
+Remote-first, mission-aligned, high-integrity team
+A deep mission, not just a job
+
+Who Is the Right Fit:
+You’ve always wanted to work on something that feels like both code and healing.
+You want to look back and say I helped rewire healthcare for good.
+You're the kind of engineer who:
+Knows LLM pipelines but also meditates
+Believes AI isn’t dangerous if it’s built with values
+Wants their work to make people feel and grow
