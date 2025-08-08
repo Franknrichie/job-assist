@@ -1,0 +1,61 @@
+const BASE_URL = 'http://localhost:8000';
+
+export async function registerUser(email, password) {
+  const res = await fetch(`${BASE_URL}/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  return res.json();
+}
+
+export async function loginUser(email, password) {
+  const res = await fetch(`${BASE_URL}/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  });
+  return res.json();
+}
+
+export async function evaluateFit(data) {
+  const res = await fetch(`${BASE_URL}/evaluate_fit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+export async function generateCoverLetter(data, token) {
+  const res = await fetch(`${BASE_URL}/generate_cover_letter`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  });
+  return res.blob();
+}
+
+export async function saveResult(data, token) {
+  const res = await fetch(`${BASE_URL}/save_result`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  });
+  return res.json();
+}
+
+export async function fetchResults(userId, token) {
+  const res = await fetch(`${BASE_URL}/results/${userId}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  return res.json();
+}

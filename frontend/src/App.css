@@ -1,0 +1,30 @@
+body {
+  background-color: #f8f9fa;
+  font-family: Arial, sans-serif;
+}
+
+.container-xl {
+  max-width: 1140px;
+}
+
+.text-area-box {
+  border: 1px solid #ced4da;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  background-color: white;
+  min-height: 300px;
+  resize: none;
+}
+
+.centered-logo {
+  display: block;
+  margin: 2rem auto;
+  max-width: 150px;
+}
+
+.card-like {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
