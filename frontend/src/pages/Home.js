@@ -42,10 +42,12 @@ export default function Home() {
       if (user) {
         await saveResult(
           {
+            user_id: user.id,
+            company_name: company,
+            job_title: title,
             job_description: description,
             evaluation_result: result.evaluation ?? "",
             cover_letter: null,
-            user_id: user.id,
           },
           user.token
         );

@@ -12,6 +12,8 @@ results_db = {}
 # Request Model
 class SaveResultRequest(BaseModel):
     user_id: str
+    company_name: str
+    job_title: str
     job_description: str
     evaluation_result: str
     cover_letter: Optional[str] = None
@@ -31,6 +33,8 @@ def save_result(payload: SaveResultRequest):
 
     results_db[payload.user_id].append({
         "job_id": job_id,
+        "company_name": payload.company_name,
+        "job_title": payload.job_title,
         "job_description": payload.job_description,
         "evaluation_result": payload.evaluation_result,
         "cover_letter": payload.cover_letter
