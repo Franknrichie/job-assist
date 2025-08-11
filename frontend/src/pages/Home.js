@@ -18,8 +18,6 @@ export default function Home() {
     // For MVP, we pass text straight through if provided:
     const payload = {
       resume: typeof resumeData === "string" ? resumeData : "", // text if pasted
-      company,
-      title,
       job_description: description
     };
 
