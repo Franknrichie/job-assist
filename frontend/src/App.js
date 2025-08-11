@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import useAuth from "./hooks/useAuth";
+import { useAuth } from "./context/AuthContext";
 import EvaluationResultsPage from './pages/EvaluationResultsPage';
 import EvaluationHistoryPage from './pages/EvaluationHistoryPage';
 

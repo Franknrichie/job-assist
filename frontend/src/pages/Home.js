@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ResumeInput from "../components/ResumeInput";
 import JobDescriptionInput from "../components/JobDescriptionInput";
-import { evaluateFit, saveResult } from "../api";
+import { evaluateFit, saveResult, uploadResume } from "../api";
 import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
@@ -12,6 +12,7 @@ export default function Home() {
   const [description, setDescription] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
+
 
   const handleEvaluate = async () => {
     // For MVP we're sending text. (If resumeData is a File, add the upload step later.)
@@ -77,7 +78,18 @@ export default function Home() {
               <h5 className="m-0">Resume</h5>
               <span className="badge text-bg-light">Paste or Drag & Drop</span>
             </div>
-            <ResumeInput onChange={setResumeData} />
+            <ResumeInput
+              value={resumeData}
+              onChange={setResumeData}
+              onFileDrop={async (file) => {
+                try {
+                  const { resume_text } = await uploadResume(file);
+                  setResumeData(resume_text);
+                } catch (e) {
+                  alert(`Failed to upload resume: ${e.message}`);
+                }
+              }}
+            />
           </div>
         </div>
 
