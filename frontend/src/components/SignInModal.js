@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { loginUser } from '../api';
-import useAuth from '../hooks/useAuth';
+import { useAuth } from "../context/AuthContext";
 
 export default function SignInModal({ show, handleClose }) {
   const [email, setEmail] = useState('');
