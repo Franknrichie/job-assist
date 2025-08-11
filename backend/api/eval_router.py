@@ -1,7 +1,8 @@
-# backend/api/eval_router.py
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from fastapi.responses import StreamingResponse
 import os
+from io import BytesIO
 
 # Optional OpenAI imports if not using dummy mode
 USE_DUMMY_AI = os.getenv("USE_DUMMY_AI", "0") == "1"
@@ -10,6 +11,9 @@ if not USE_DUMMY_AI:
     from openai import OpenAI
     load_dotenv()
     client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+else:
+    # For dummy docx generation
+    from docx import Document
 
 router = APIRouter()
 
@@ -25,8 +29,7 @@ class CoverLetterRequest(BaseModel):
 
 
 def _dummy_evaluation(resume_text: str, job_description: str) -> dict:
-    # Minimal, stable fake output (same shape your frontend already handles)
-    sample = f"""---
+    sample = """---
 Score: 7
 
 Alignments and Gaps:
@@ -41,19 +44,34 @@ Overall, the candidate appears to be a good match with room to grow in a few are
 ---"""
     return {"evaluation": sample}
 
-def _dummy_cover_letter(resume_text: str, job_description: str, company_name: str) -> dict:
-    sample = f"""Dear Hiring Team at {company_name},
 
-I’m excited to apply for this role. My background shows a consistent track record of solving technical problems, supporting teams, and documenting processes clearly. The position’s focus on reliable execution and thoughtful collaboration aligns well with how I approach my work.
+def _dummy_cover_letter_docx(company_name: str) -> StreamingResponse:
+    # Create an in-memory .docx
+    doc = Document()
+    doc.add_paragraph(f"Dear Hiring Team at {company_name},")
+    doc.add_paragraph(
+        "I’m excited to apply for this role. My background shows a consistent track record of solving "
+        "technical problems, supporting teams, and documenting processes clearly. The position’s focus on "
+        "reliable execution and thoughtful collaboration aligns well with how I approach my work."
+    )
+    doc.add_paragraph(
+        "In my recent experience, I supported cross-functional stakeholders, analyzed issues to get to "
+        "root cause, and communicated findings concisely. I’m comfortable learning new tools quickly "
+        "and improving workflows where it helps the team succeed. I’d welcome the chance to contribute "
+        "that same energy and ownership here."
+    )
+    doc.add_paragraph("Thank you for your time and consideration.")
+    doc.add_paragraph("Sincerely,\nYour Candidate")
 
-In my recent experience, I supported cross-functional stakeholders, analyzed issues to get to root cause, and communicated findings concisely. I’m comfortable learning new tools quickly and improving workflows where it helps the team succeed. I’d welcome the chance to contribute that same energy and ownership here.
+    file_stream = BytesIO()
+    doc.save(file_stream)
+    file_stream.seek(0)
 
-Thank you for your time and consideration.
-
-Sincerely,
-Your Candidate
-"""
-    return {"cover_letter": sample}
+    return StreamingResponse(
+        file_stream,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": "attachment; filename=cover_letter.docx"}
+    )
 
 
 # evaluate_fit Route
@@ -94,12 +112,10 @@ Resume:
 {payload.resume_text}
 \"\"\"
 
-
 Job Description:
 \"\"\"
 {payload.job_description}
 \"\"\"
-
 
 Respond in this exact format:
 ---
@@ -129,7 +145,7 @@ Summary:
 @router.post("/generate_cover_letter")
 def generate_cover_letter(payload: CoverLetterRequest):
     if USE_DUMMY_AI:
-        return _dummy_cover_letter(payload.resume_text, payload.job_description, payload.company_name)
+        return _dummy_cover_letter_docx(payload.company_name)
 
     system_prompt = {
         "role": "system",
@@ -149,12 +165,10 @@ Resume:
 {payload.resume_text}
 \"\"\"
 
-
 Job Description:
 \"\"\"
 {payload.job_description}
 \"\"\"
-
 
 Guidelines:
 - Start with a strong, natural intro paragraph.
