@@ -1,58 +1,59 @@
-// src/pages/EvaluationResultsPage.js
 import React, { useEffect, useState } from 'react';
 import EvaluationResult from '../components/EvaluationResult';
 
 export default function EvaluationResultsPage() {
   const [result, setResult] = useState(null);
+  const [inputs, setInputs] = useState(null); // resume_text, job_description, company_name
 
   useEffect(() => {
     const stored = localStorage.getItem('evaluation');
-    if (stored) {
-      setResult(JSON.parse(stored));
-    }
+    if (stored) setResult(JSON.parse(stored));
+
+    const storedInputs = localStorage.getItem('evaluationInputs');
+    if (storedInputs) setInputs(JSON.parse(storedInputs));
   }, []);
 
   const handleDownload = async () => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) return;
+    // Build the payload the backend expects (works in dummy mode too)
+    const payload = {
+      resume_text: inputs?.resume_text || '',
+      job_description: inputs?.job_description || '',
+      company_name: inputs?.company_name || 'Your Company',
+    };
 
-    // NOTE:
-    // Your backend /generate_cover_letter expects:
-    // { resume_text, job_description, company_name }
-    // This call still posts `result` as-is (as in your original code).
-    // Once you store resume_text / job_description / company_name, update the body accordingly.
+    try {
+      const response = await fetch('http://localhost:8000/generate_cover_letter', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+          // Authorization header not required by your current dummy route
+        },
+        body: JSON.stringify(payload)
+      });
 
-    const response = await fetch('http://localhost:8000/generate_cover_letter', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${user.token}`
-      },
-      body: JSON.stringify(result)
-    });
+      if (!response.ok) {
+        const msg = await response.text().catch(() => '');
+        alert(`Cover letter generation failed: HTTP ${response.status}\n${msg}`);
+        return;
+      }
 
-    if (!response.ok) {
-      const msg = await response.text().catch(() => '');
-      alert(`Cover letter generation failed: HTTP ${response.status}\n${msg}`);
-      return;
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'cover_letter.docx';
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (e) {
+      alert(`Download failed:\n${e.message}`);
     }
-
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'cover_letter.docx';
-    a.click();
-    window.URL.revokeObjectURL(url);
   };
 
   if (!result) return <div className="container mt-5">Loading...</div>;
 
   return (
     <div className="container-xl mt-4">
-      {/* Fallback: if backend returned a single 'evaluation' string,
-          render it nicely; otherwise use the structured component */}
-      {result.evaluation ? (
+       {result.evaluation ? (
         <div className="card-like p-3">
           <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
             {result.evaluation}

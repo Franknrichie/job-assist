@@ -2,50 +2,60 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ResumeInput from "../components/ResumeInput";
 import JobDescriptionInput from "../components/JobDescriptionInput";
-import { evaluateFit, saveResult, uploadResume } from "../api";
+import { evaluateFit, saveResult } from "../api";
 import useAuth from "../hooks/useAuth";
 
 export default function Home() {
-  const [resumeData, setResumeData] = useState("");
+  const [resumeData, setResumeData] = useState(""); // text (MVP)
   const [company, setCompany] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
 
-const handleEvaluate = async () => {
-  let resumeText = "";
+  const handleEvaluate = async () => {
+    // For MVP we're sending text. (If resumeData is a File, add the upload step later.)
+    const resume_text =
+      typeof resumeData === "string" ? resumeData : "";
 
-  if (typeof resumeData === "string") {
-    resumeText = resumeData;
-  } else if (resumeData instanceof File) {
-    // get extracted text from backend first
-    const { resume_text } = await uploadResume(resumeData);
-    resumeText = resume_text;
-  }
-
-  const payload = {
-    resume_text: resumeText,
-    job_description: description
-  };
-
-  const result = await evaluateFit(payload);
-  localStorage.setItem("evaluation", JSON.stringify(result));
-
-  if (user) {
-    await saveResult(
-      {
+    // Save inputs we’ll need later for cover letter generation
+    localStorage.setItem(
+      "evaluationInputs",
+      JSON.stringify({
+        resume_text,
         job_description: description,
-        evaluation_result: result.evaluation, // your backend returns { evaluation: "..." }
-        cover_letter: null,
-        user_id: user.id
-      },
-      user.token
+        company_name: company, // not yet required by backend
+        job_title: title, // not yet required by backend
+      })
     );
-  }
 
-  navigate("/results");
-};
+    // Call evaluation
+    const payload = {
+      resume_text,
+      job_description: description,
+    };
+
+    try {
+      const result = await evaluateFit(payload);
+      localStorage.setItem("evaluation", JSON.stringify(result));
+
+      if (user) {
+        await saveResult(
+          {
+            job_description: description,
+            evaluation_result: result.evaluation ?? "",
+            cover_letter: null,
+            user_id: user.id,
+          },
+          user.token
+        );
+      }
+
+      navigate("/results");
+    } catch (e) {
+      alert(`Evaluation failed:\n${e.message}`);
+    }
+  };
 
   return (
     <div className="container-xl py-4">
