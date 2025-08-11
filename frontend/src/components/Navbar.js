@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import SignUpModal from './SignUpModal';
-import SignInModal from './SignInModal';
-import useAuth from '../hooks/useAuth';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import SignUpModal from "./SignUpModal";
+import SignInModal from "./SignInModal";
+import useAuth from "../hooks/useAuth";
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -12,27 +12,30 @@ export default function Navbar() {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate("/");
   };
 
   return (
-    <nav className="navbar navbar-light bg-light px-3">
-      <Link to="/" className="navbar-brand">
-        <img src="/logo-placeholder.png" alt="Home" height="40" />
+    <nav className="navbar navbar-light bg-info shadow-sm px-3">
+      <Link to="/" className="navbar-brand d-flex align-items-center gap-2">
+        {/* Use public/ asset via root-relative path */}
+        <img src="/AlignAI-logo-3.png" alt="Home" height="40" />
       </Link>
-      {user && (
-        <Link to="/history" className="btn btn-outline-secondary mx-2">History</Link>
+
+      {/* Left-aligned actions per your spec */}
+      {user ? (
+        <div className="d-flex align-items-center gap-2">
+          <Link to="/history" className="btn btn-outline-primary">History</Link>
+          <button className="btn btn-secondary" onClick={handleLogout}>Log Out</button>
+        </div>
+      ) : (
+        <div className="d-flex align-items-center gap-2">
+          <button className="btn btn-primary" onClick={() => setShowSignUp(true)}>Sign Up</button>
+          <button className="btn btn-outline-primary" onClick={() => setShowSignIn(true)}>Sign In</button>
+        </div>
       )}
-      <div className="ms-auto">
-        {!user ? (
-          <>
-            <button className="btn btn-outline-primary mx-1" onClick={() => setShowSignUp(true)}>Sign Up</button>
-            <button className="btn btn-outline-success mx-1" onClick={() => setShowSignIn(true)}>Sign In</button>
-          </>
-        ) : (
-          <button className="btn btn-danger" onClick={handleLogout}>Log Out</button>
-        )}
-      </div>
+
+      {/* Modals */}
       <SignUpModal show={showSignUp} handleClose={() => setShowSignUp(false)} />
       <SignInModal show={showSignIn} handleClose={() => setShowSignIn(false)} />
     </nav>

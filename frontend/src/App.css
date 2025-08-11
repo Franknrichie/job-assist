@@ -28,3 +28,52 @@ body {
   border-radius: 1rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* Navbar polish */
+.app-navbar {
+  --app-brand-scale: 1;
+  --app-nav-radius: 12px;
+}
+
+.app-navbar .container {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.app-navbar__brand:hover,
+.app-navbar__brand:focus {
+  opacity: 0.9;
+  text-decoration: none;
+}
+
+.app-navbar__logo {
+  display: block;
+  transform: scale(var(--app-brand-scale));
+  transition: transform 120ms ease, filter 120ms ease, opacity 120ms ease;
+  filter: saturate(1.05) contrast(1.02);
+}
+
+.app-navbar__logo:hover {
+  transform: scale(calc(var(--app-brand-scale) * 1.02));
+}
+
+/* Button refinements to match a sleek mockup look */
+.btn {
+  border-radius: 10px;
+}
+
+.btn-outline-primary.active {
+  color: #fff;
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+/* Make toggler feel snappier */
+.navbar-toggler {
+  border-radius: 10px;
+}
+
+/* Subtle shadow that matches card styles */
+.navbar.shadow-sm {
+  box-shadow: 0 2px 14px rgba(16, 24, 40, 0.06);
+}
