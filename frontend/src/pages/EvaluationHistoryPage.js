@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchResults } from '../api';
-import useAuth from '../hooks/useAuth';
+import { useAuth } from "../context/AuthContext";
 import HistoryTable from '../components/HistoryTable';
 import { useNavigate } from 'react-router-dom';
 

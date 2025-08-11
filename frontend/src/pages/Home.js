@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import ResumeInput from "../components/ResumeInput";
 import JobDescriptionInput from "../components/JobDescriptionInput";
 import { evaluateFit, saveResult } from "../api";
-import useAuth from "../hooks/useAuth";
+import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
   const [resumeData, setResumeData] = useState(""); // text (MVP)
