@@ -11,7 +11,7 @@ export default function EvaluationHistoryPage() {
 
   useEffect(() => {
     if (!user) return navigate('/');
-    fetchResults(user.id, user.token).then(data => setRecords(data));
+    fetchResults(user.id, user.token).then(data => setRecords(data.results || []));
   }, [user, navigate]);
 
   return (

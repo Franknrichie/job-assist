@@ -15,8 +15,8 @@ export default function HistoryTable({ records }) {
         {records.map((record, idx) => (
           <tr key={idx}>
             <td>{record.score}</td>
-            <td>{record.company}</td>
-            <td>{record.title}</td>
+            <td>{record.company_name}</td>
+            <td>{record.job_title}</td>
             <td>
               {record.cover_letter_url ? (
                 <a
