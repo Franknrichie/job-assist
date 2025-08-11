@@ -2,42 +2,50 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ResumeInput from "../components/ResumeInput";
 import JobDescriptionInput from "../components/JobDescriptionInput";
-import { evaluateFit, saveResult } from "../api";
+import { evaluateFit, saveResult, uploadResume } from "../api";
 import useAuth from "../hooks/useAuth";
 
 export default function Home() {
-  const [resumeData, setResumeData] = useState("");     // can be text or File from ResumeInput
+  const [resumeData, setResumeData] = useState("");
   const [company, setCompany] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const handleEvaluate = async () => {
-    // If resumeData is a File, let backend handle via its upload endpoint in your next iteration.
-    // For MVP, we pass text straight through if provided:
-    const payload = {
-      resume: typeof resumeData === "string" ? resumeData : "", // text if pasted
-      job_description: description
-    };
+const handleEvaluate = async () => {
+  let resumeText = "";
 
-    const result = await evaluateFit(payload);
-    localStorage.setItem("evaluation", JSON.stringify(result));
+  if (typeof resumeData === "string") {
+    resumeText = resumeData;
+  } else if (resumeData instanceof File) {
+    // get extracted text from backend first
+    const { resume_text } = await uploadResume(resumeData);
+    resumeText = resume_text;
+  }
 
-    if (user) {
-      await saveResult(
-        {
-          ...result,
-          company,
-          title,
-          user_id: user.id
-        },
-        user.token
-      );
-    }
-
-    navigate("/results");
+  const payload = {
+    resume_text: resumeText,
+    job_description: description
   };
+
+  const result = await evaluateFit(payload);
+  localStorage.setItem("evaluation", JSON.stringify(result));
+
+  if (user) {
+    await saveResult(
+      {
+        job_description: description,
+        evaluation_result: result.evaluation, // your backend returns { evaluation: "..." }
+        cover_letter: null,
+        user_id: user.id
+      },
+      user.token
+    );
+  }
+
+  navigate("/results");
+};
 
   return (
     <div className="container-xl py-4">

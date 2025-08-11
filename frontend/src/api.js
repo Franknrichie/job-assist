@@ -63,3 +63,17 @@ export async function fetchResults(userId, token) {
   });
   return res.json();
 }
+
+export async function uploadResume(file) {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await fetch(`${BASE_URL}/upload_resume`, {
+    method: 'POST',
+    body: form
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`HTTP ${res.status}: ${text}`);
+  }
+  return res.json();
+}
