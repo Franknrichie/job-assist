@@ -57,7 +57,6 @@ body {
   transform: scale(calc(var(--app-brand-scale) * 1.02));
 }
 
-/* Button refinements to match a sleek mockup look */
 .btn {
   border-radius: 10px;
 }
@@ -68,12 +67,74 @@ body {
   border-color: var(--bs-primary);
 }
 
-/* Make toggler feel snappier */
 .navbar-toggler {
   border-radius: 10px;
 }
 
-/* Subtle shadow that matches card styles */
 .navbar.shadow-sm {
   box-shadow: 0 2px 14px rgba(16, 24, 40, 0.06);
+}
+
+.app-panel {
+  min-height: 480px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropzone-wrapper {
+  flex: 1;
+  border: 2px dashed #cfd8dc;
+  border-radius: 14px;
+  background: #ffffff;
+  transition: border-color 120ms ease, background-color 120ms ease;
+  min-height: 360px;
+  display: flex;
+}
+
+.dropzone-wrapper.is-dragover {
+  border-color: #0d6efd;
+  background-color: #f1f7ff;
+}
+
+.dropzone-inset {
+  padding: 1rem;
+  width: 100%;
+  display: flex;
+}
+
+.dropzone-textarea {
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.jd-grid {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 0.75rem;
+  height: 100%;
+}
+
+.jd-description {
+  height: 100%;
+  min-height: 240px;
+  resize: none;
+}
+
+.card-like {
+  background-color: #fff;
+  padding: 1.25rem;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #adb5bd !important;
+  opacity: 1 !important;
 }
