@@ -311,3 +311,8 @@ textarea::placeholder {
   visibility: hidden;      /* keeps layout space */
   margin-bottom: 0.4rem;   /* same spacing as real items */
 }
+
+table th, table td {
+  text-align: center;
+  vertical-align: middle;
+}
