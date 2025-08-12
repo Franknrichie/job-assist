@@ -23,6 +23,7 @@ export default function HistoryTable({ records, userId }) {
             <th scope="col">Company</th>
             <th scope="col">Job Title</th>
             <th scope="col">Download</th>
+            <th scope="col">Delete</th>
           </tr>
         </thead>
         <tbody>
@@ -50,6 +51,7 @@ export default function HistoryTable({ records, userId }) {
                     <span className="text-muted">N/A</span>
                   )}
                 </td>
+                <td>{/*trash icon here*/}</td>
               </tr>
             );
           })}
