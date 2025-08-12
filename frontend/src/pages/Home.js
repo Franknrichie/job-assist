@@ -43,7 +43,7 @@ export default function Home() {
       if (user) {
         const save = await saveResult(
           {
-            user_id: user.id,
+            user_id: user.user_id,
             company_name: company,
             job_title: title,
             job_description: description,
