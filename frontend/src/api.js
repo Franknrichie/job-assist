@@ -64,6 +64,20 @@ export async function fetchResults(userId, token) {
   return res.json();
 }
 
+export async function saveCoverLetter(userId, jobId, coverLetterText) {
+  const res = await fetch(`${BASE_URL}/save_cover_letter`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ user_id: userId, job_id: jobId, cover_letter_text: coverLetterText })
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+export function downloadCoverLetterUrl(userId, jobId) {
+  return `${BASE_URL}/results/${userId}/${jobId}/cover_letter.docx`;
+}
+
 export async function uploadResume(file) {
   const form = new FormData();
   form.append('file', file);
