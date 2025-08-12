@@ -12,11 +12,16 @@ export default function EvaluationHistoryPage() {
 
   useEffect(() => {
     if (!user) return navigate('/');
-
+  
     (async () => {
       try {
-        const data = await fetchResults(user.user_id, user.token);
-        setRecords(data.results || []); // backend returns { results: [...] }
+        const data = await fetchResults(user.user_id, user.token); // user.user_id!
+        const rows = (data.results || []).slice().sort((a, b) => {
+          const da = a.created_at ? Date.parse(a.created_at) : 0;
+          const db = b.created_at ? Date.parse(b.created_at) : 0;
+          return db - da; // newest first
+        });
+        setRecords(rows);
       } catch (e) {
         console.error('Failed to fetch history:', e);
         setRecords([]);
