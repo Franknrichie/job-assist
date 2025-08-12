@@ -1,4 +1,5 @@
 import React from 'react';
+import { downloadCoverLetterUrl } from '../api';
 
 export default function HistoryTable({ records }) {
   return (
@@ -14,15 +15,15 @@ export default function HistoryTable({ records }) {
       <tbody>
         {records.map((record, idx) => (
           <tr key={idx}>
-            <td>{record.score}</td>
+            {/* <td>{record.score}</td> */}
+            <td>N/A</td>
             <td>{record.company_name}</td>
             <td>{record.job_title}</td>
             <td>
-              {record.cover_letter_url ? (
+              {record.cover_letter_text ? (
                 <a
-                  href={record.cover_letter_url}
-                  className="btn btn-sm btn-outline-primary"
-                  download
+                  href={downloadCoverLetterUrl(record.user_id || '', record.job_id)}
+                  className="btn btn-sm btn-secondary btn-3d"
                 >
                   Download
                 </a>
