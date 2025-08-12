@@ -51,8 +51,17 @@ export default function Navbar() {
       </div>
 
       {/* Modals */}
-      <SignUpModal show={showSignUp} handleClose={() => setShowSignUp(false)} />
-      <SignInModal show={showSignIn} handleClose={() => setShowSignIn(false)} />
+      <SignUpModal
+        show={showSignUp}
+        handleClose={() => setShowSignUp(false)}
+        onOpenSignIn={() => {
+          setShowSignUp(false);
+          setShowSignIn(true);
+        }}
+      />
+      <SignInModal
+        show={showSignIn} 
+        handleClose={() => setShowSignIn(false)} />
     </nav>
   );
 }

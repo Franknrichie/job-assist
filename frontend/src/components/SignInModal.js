@@ -11,6 +11,13 @@ export default function SignInModal({ show, handleClose }) {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  const reset = () => {
+    setEmail('');
+    setPassword('');
+    setError('');
+    setSubmitting(false);
+  };
+
   const onSubmit = async (e) => {
     e?.preventDefault();
     setError('');
@@ -21,21 +28,18 @@ export default function SignInModal({ show, handleClose }) {
 
     setSubmitting(true);
     try {
-      // Expect backend: { message, user_id } on success; 401 with detail on failure
       const res = await loginUser(email, password);
-
-      // Defensive: only accept a payload that has a user_id
       if (!res || !res.user_id) {
         const msg =
           (typeof res === 'object' && (res.error || res.detail || res.message)) ||
           'Invalid email or password.';
         setError(String(msg));
-        return; // <-- do NOT call login()
+        return;
       }
-
-      // Store the correct shape in AuthContext/localStorage
       login({ user_id: res.user_id });
+      // Close and reset after successful login
       handleClose();
+      reset();
     } catch (err) {
       setError(err?.message || 'Unable to sign in right now.');
     } finally {
@@ -44,7 +48,11 @@ export default function SignInModal({ show, handleClose }) {
   };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal
+      show={show}
+      onHide={() => { handleClose(); reset(); }}   // reset on any manual close
+      onExited={reset}                             // extra safety: reset after animation ends
+    >
       <Form onSubmit={onSubmit}>
         <Modal.Header closeButton>
           <Modal.Title>Sign In</Modal.Title>
@@ -61,6 +69,7 @@ export default function SignInModal({ show, handleClose }) {
               onChange={e => setEmail(e.target.value)}
               autoFocus
               placeholder="you@example.com"
+              autoComplete="username"
             />
           </Form.Group>
 
@@ -71,12 +80,13 @@ export default function SignInModal({ show, handleClose }) {
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
+              autoComplete="current-password"
             />
           </Form.Group>
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="secondary btn-3d" onClick={handleClose} disabled={submitting}>
+          <Button variant="secondary btn-3d" onClick={() => { handleClose(); reset(); }} disabled={submitting}>
             Cancel
           </Button>
           <Button type="submit" variant="success btn-3d" disabled={submitting}>
