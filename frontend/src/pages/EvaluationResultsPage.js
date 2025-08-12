@@ -188,7 +188,7 @@ export default function EvaluationResultsPage() {
         <button className="btn btn-primary mb-0 btn-3d" onClick={handleDownload}>
           Generate Tailored Cover Letter
         </button>
-        {/* <img src="/AlignAI-logo.png" alt="Placeholder" className="alignAI-logo mt-0" /> */}
+        <img src="/AlignAI-logo.png" alt="Placeholder" className="alignAI-logo mt-0" />
       </div>
     </div>
   );
