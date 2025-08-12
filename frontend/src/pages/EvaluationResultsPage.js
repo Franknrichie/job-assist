@@ -80,6 +80,25 @@ export default function EvaluationResultsPage() {
         body: JSON.stringify(payload)
       });
 
+      // after successful download:
+      // If the user is logged in, mark this record as having a stored cover letter
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      const jobId = localStorage.getItem('lastJobId');
+      if (user && jobId) {
+       const company = (inputs?.company_name || 'Your Company').trim();
+       const simpleText = `Dear Hiring Team at ${company},\n\n(Generated in dummy mode)\n\nSincerely,\nYour Candidate`;
+       try {
+         // tell backend to attach cover_letter_text to this result
+         await fetch('http://localhost:8000/save_cover_letter', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({ user_id: user.id, job_id: jobId, cover_letter_text: simpleText })
+         });
+       } catch (e) {
+         console.warn('Could not save cover letter to history:', e);
+       }
+      }
+
       if (!response.ok) {
         const msg = await response.text().catch(() => '');
         alert(`Cover letter generation failed: HTTP ${response.status}\n${msg}`);
@@ -108,7 +127,6 @@ export default function EvaluationResultsPage() {
 
   return (
     <div className="container-xl mt-4">
-      {/* Top: Big Score badge */}
       <div className="d-flex justify-content-center mb-4">
         <div className="score-badge">
           <div className="score-badge__number">
@@ -118,8 +136,6 @@ export default function EvaluationResultsPage() {
         </div>
       </div>
 
-      {/* Middle: Alignments & Gaps side-by-side */}
-      {/* Equal-height row */}
       <div className="row g-4 align-items-stretch">
         <div className="col-12 col-lg-6">
           <div className="section-card h-100 d-flex flex-column">
@@ -148,7 +164,6 @@ export default function EvaluationResultsPage() {
         </div>
       </div>
 
-      {/* Summary */}
       <div className="section-card review-summary mt-4">
         <h5 className="section-card__title">Review Summary</h5>
         {parsed?.summary ? (
@@ -161,7 +176,6 @@ export default function EvaluationResultsPage() {
         )}
       </div>
 
-      {/* CTA + image placeholder */}
       <div className="text-center mt-4">
         <button className="btn btn-primary mb-0 btn-3d" onClick={handleDownload}>
           Generate Tailored Cover Letter
