@@ -44,14 +44,18 @@ export async function generateCoverLetter(data, token) {
 }
 
 export async function saveResult(data, token) {
-  const res = await fetch(`${BASE_URL}/save_result`, {
+  const res = await fetch(`http://localhost:8000/save_result`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
     },
     body: JSON.stringify(data)
   });
+  if (!res.ok) {
+    const text = await res.text(); // <- show FastAPI detail
+    throw new Error(`HTTP ${res.status}: ${text}`);
+  }
   return res.json();
 }
 
