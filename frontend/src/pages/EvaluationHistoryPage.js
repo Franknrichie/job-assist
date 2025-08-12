@@ -15,7 +15,7 @@ export default function EvaluationHistoryPage() {
   
     (async () => {
       try {
-        const data = await fetchResults(user.user_id, user.token); // user.user_id!
+        const data = await fetchResults(user.user_id, user.token);
         const rows = (data.results || []).slice().sort((a, b) => {
           const da = a.created_at ? Date.parse(a.created_at) : 0;
           const db = b.created_at ? Date.parse(b.created_at) : 0;

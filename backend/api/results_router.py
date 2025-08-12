@@ -1,6 +1,9 @@
 # backend/api/results_router.py
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
+from fastapi.responses import StreamingResponse
+from io import BytesIO
+from docx import Document
 from typing import Optional
 from datetime import datetime, timezone
 import uuid
@@ -77,3 +80,22 @@ def save_cover_letter(payload: SaveCoverLetterRequest):
         raise HTTPException(status_code=404, detail="Result not found")
     rec["cover_letter"] = payload.cover_letter_text  # store text to mark presence
     return {"message": "Cover letter saved"}
+
+@router.get("/results/{user_id}/{job_id}/cover_letter.docx")
+def download_cover_letter(user_id: str, job_id: str):
+    rec = _find_record(user_id, job_id)
+    if not rec or not rec.get("cover_letter"):
+        raise HTTPException(status_code=404, detail="No stored cover letter for this record")
+
+    doc = Document()
+    for para in rec["cover_letter"].split("\n"):
+        doc.add_paragraph(para)
+
+    buf = BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+    return StreamingResponse(
+        buf,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        headers={"Content-Disposition": "attachment; filename=cover_letter.docx"}
+    )

@@ -26,7 +26,7 @@ export default function HistoryTable({ records, userId }) {
               {record.cover_letter ? (
                 <a
                   href={`http://localhost:8000/results/${userId}/${record.job_id}/cover_letter.docx`}
-                  className="btn btn-sm btn-outline-primary"
+                  className="btn btn-sm btn-secondary btn-3d"
                 >
                   Download
                 </a>
