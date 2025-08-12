@@ -26,6 +26,20 @@ class SaveResultRequest(BaseModel):
     resume_text: Optional[str] = None
     cover_letter: Optional[str] = None
 
+class SaveCoverLetterRequest(BaseModel):
+    user_id: str
+    job_id: str
+    cover_letter_text: str
+
+def _get_user_records(user_id: str):
+    return results_db.setdefault(user_id, [])
+
+def _find_record(user_id: str, job_id: str):
+    for r in _get_user_records(user_id):
+        if r["job_id"] == job_id:
+            return r
+    return None
+
 @router.post("/save_result")
 def save_result(payload: SaveResultRequest):
     job_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, payload.job_description))  # Deterministic UUID
@@ -53,3 +67,11 @@ def save_result(payload: SaveResultRequest):
 @router.get("/results/{user_id}")
 def get_results(user_id: str):
     return {"results": results_db.get(user_id, [])}
+
+@router.post("/save_cover_letter")
+def save_cover_letter(payload: SaveCoverLetterRequest):
+    rec = _find_record(payload.user_id, payload.job_id)
+    if not rec:
+        raise HTTPException(status_code=404, detail="Result not found")
+    rec["cover_letter"] = payload.cover_letter_text  # store text to mark presence
+    return {"message": "Cover letter saved"}
