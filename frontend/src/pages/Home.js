@@ -54,12 +54,12 @@ export default function Home() {
           user.token
         );
 
+        // keep last job id to attach cover-letter later
+        if (save?.job_id) {
+          localStorage.setItem("lastJobId", save.job_id);
+        }
       }
-      // keep last job id to attach cover-letter later
-      if (save?.job_id) {
-        localStorage.setItem("lastJobId", save.job_id);
-      }
-      
+
       navigate("/results");
     } catch (e) {
       alert(`Evaluation failed:\n${e.message}`);
