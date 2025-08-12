@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
   const value = {
     user,
     isReady: user !== undefined,
-    isAuthenticated: !!user,
+    isAuthenticated: !!user?.user_id,
     login,
     logout,
   };
