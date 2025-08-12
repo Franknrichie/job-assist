@@ -2,6 +2,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional
+from datetime import datetime, timezone
 import uuid
 
 router = APIRouter()
@@ -59,7 +60,8 @@ def save_result(payload: SaveResultRequest):
         "job_description": payload.job_description,
         "resume_text": payload.resume_text or "",
         "evaluation_result": payload.evaluation_result,
-        "cover_letter": payload.cover_letter  # optional for now
+        "cover_letter": payload.cover_letter,  # or none
+        "created_at": datetime.now(timezone.utc).isoformat()
     })
 
     return {"message": "Result saved successfully", "job_id": job_id}
