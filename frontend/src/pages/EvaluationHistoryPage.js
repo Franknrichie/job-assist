@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { fetchResults } from "../api";
+import React, { useEffect, useState } from 'react';
+import { fetchResults } from '../api';
 import { useAuth } from "../context/AuthContext";
-import HistoryTable from "../components/HistoryTable";
-import { useNavigate } from "react-router-dom";
+import HistoryTable from '../components/HistoryTable';
+import { useNavigate } from 'react-router-dom';
 
 export default function EvaluationHistoryPage() {
   const { user } = useAuth();
@@ -11,37 +11,28 @@ export default function EvaluationHistoryPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Wait until we know if user exists
-    if (user === null) return; // Still loading auth state
-    if (!user) {
-      navigate("/");
-      return;
-    }
+    if (!user) return navigate('/');
 
-    const loadHistory = async () => {
+    (async () => {
       try {
-        const data = await fetchResults(user.id, user.token);
-        // Adjust depending on backend shape
-        setRecords(data.results || data || []);
-      } catch (err) {
-        console.error("Failed to fetch history:", err);
+        const data = await fetchResults(user.user_id, user.token);
+        setRecords(data.results || []); // backend returns { results: [...] }
+      } catch (e) {
+        console.error('Failed to fetch history:', e);
+        setRecords([]);
       } finally {
         setLoading(false);
       }
-    };
-
-    loadHistory();
+    })();
   }, [user, navigate]);
 
-  if (loading) {
-    return <div className="container-xl mt-4">Loading...</div>;
-  }
+  if (loading) return <div className="container-xl mt-4">Loading...</div>;
 
   return (
     <div className="container-xl mt-4">
       <h2>Evaluation History</h2>
-      {records.length > 0 ? (
-        <HistoryTable records={records} />
+      {records.length ? (
+        <HistoryTable records={records} userId={user.user_id} />
       ) : (
         <p>No records found.</p>
       )}

@@ -1,7 +1,6 @@
 import React from 'react';
-import { downloadCoverLetterUrl } from '../api';
 
-export default function HistoryTable({ records }) {
+export default function HistoryTable({ records, userId }) {
   return (
     <table className="table table-striped">
       <thead>
@@ -15,15 +14,15 @@ export default function HistoryTable({ records }) {
       <tbody>
         {records.map((record, idx) => (
           <tr key={idx}>
-            {/* <td>{record.score}</td> */}
+            {/*parse score later from evaluation_result; N/A for now */}
             <td>N/A</td>
             <td>{record.company_name}</td>
             <td>{record.job_title}</td>
             <td>
-              {record.cover_letter_text ? (
+              {record.cover_letter ? (
                 <a
-                  href={downloadCoverLetterUrl(record.user_id || '', record.job_id)}
-                  className="btn btn-sm btn-secondary btn-3d"
+                  href={`http://localhost:8000/results/${userId}/${record.job_id}/cover_letter.docx`}
+                  className="btn btn-sm btn-outline-primary"
                 >
                   Download
                 </a>
