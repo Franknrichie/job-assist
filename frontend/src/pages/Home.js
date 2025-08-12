@@ -41,19 +41,25 @@ export default function Home() {
       localStorage.setItem("evaluation", JSON.stringify(result));
 
       if (user) {
-        await saveResult(
+        const save = await saveResult(
           {
             user_id: user.id,
             company_name: company,
             job_title: title,
             job_description: description,
             evaluation_result: result.evaluation ?? "",
+            resume_text,
             cover_letter: null,
           },
           user.token
         );
-      }
 
+      }
+      // keep last job id to attach cover-letter later
+      if (save?.job_id) {
+        localStorage.setItem("lastJobId", save.job_id);
+      }
+      
       navigate("/results");
     } catch (e) {
       alert(`Evaluation failed:\n${e.message}`);
