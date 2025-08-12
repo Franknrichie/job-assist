@@ -1,1 +1,45 @@
-sample CV
+Summary
+Full-stack developer specializing in custom AI solutions and agentic systems. I design and deploy intelligent web applications by combining dynamic, responsive user interfaces with robust, secure APIs and modern databases — using React, TypeScript, FastAPI (Python), and PostgreSQL. Skilled in building autonomous agents tailored to specific business needs, including recursive reasoning, semantic memory (pgvector + OpenAI embeddings), Retrieval-Augmented Generation (RAG), Chain-of-Thought (CoT) reasoning, and fine-tuned prompt engineering. Former ER nurse and Coast Guard veteran—bringing critical thinking, resilience, and a mission-driven mindset to complex problem-solving.
+Skills
+·	AI & LLM Systems: OpenAI GPT, Anthropic Claude, LangChain, Prompt Engineering, Chain-of-Thought (CoT) Reasoning, Agent Chaining, Recursive Prompt Optimization, Retrieval-Augmented Generation (RAG), Semantic Memory (pgvector), Vector Similarity Search
+·	Languages: JavaScript, TypeScript, Python, HTML, CSS
+·	Frontend: React, Next.js, Tailwind CSS, Leaflet
+·	Backend: Node.js, Express.js, Flask, FastAPI, REST APIs, JWT, OAuth
+·	Databases: PostgreSQL, MongoDB Atlas, pgvector
+·	Cloud & AWS: AWS, GovCloud, VPC, EC2, VPN/VDI, CodeCommit, CloudWatch
+·	DevOps & Tools: Git, GitHub, Docker, Vercel, Render, SendGrid, CI/CD, Linux  
+·	Soft Skills: Leadership, Collaboration, Communication, Crisis Management
+Professional Experience
+Full-Stack Software Developer | Binary Solutions AI | Remote | 06/2024 – Present
+Binary Solutions is an AI-first full-stack consultancy specializing in custom AI-integrated software solutions. As a full-stack developer, I build secure, scalable web applications and intelligent systems tailored to client needs across regulated and non-regulated sectors — including healthcare, law, finance, and government. Our work spans dynamic user interfaces, robust backend APIs, and deeply embedded LLM-powered agents, deployed on modern AWS infrastructure with a focus on compliance and security. 
+·	Designed and deployed production-ready web apps using React, Next.js, TypeScript, and Python, backed by MongoDB and PostgreSQL — tailored to meet unique client goals across industries.
+·	Developed and integrated AI-powered systems using prompt engineering, agent chaining, RAG pipelines, semantic memory (pgvector), and recursive optimization for real-world LLM applications.
+·	Built scalable, secure backend services with Flask and FastAPI, integrating JWT authentication, RESTful APIs, and LLM pipelines.
+·	Led full-stack projects end-to-end, working in Agile/Scrum teams using Jira for task management and remote collaboration.
+
+
+
+Full-Stack Software Developer | Self-Employed | Remote | 04/2022 – 06/2024
+Provided full-stack web development services and AI integration for a range of clients, from startups to small businesses, building production-ready websites and applications.
+·	Built responsive, production-grade web apps using React, Tailwind, FastAPI, Node.js, and PostgreSQL/MongoDB.
+·	Integrated OpenAI and Anthropic APIs to add AI-powered features like NLP tools and automated content pipelines.
+·	Managed deployments via Vercel, Render, and GitHub Actions; collaborated directly with clients on architecture, features, and delivery.
+Studio Owner & Tattoo Artist | Liberty Tattooing | Sherman, TX | 06/2018 – 02/2025
+·	Developed precision and creativity as a self-taught fine line black & grey tattoo artist.
+·	Managed studio operations, client relations, finances, and marketing.
+·	Mentored apprentices, fostering agile teamwork as owner and lead artist.
+Registered Nurse (ER & Supervisor) | Various Locations | 06/2003 – 05/2018
+·	ER/trauma nurse in 2-to-50-bed EDs, providing critical care under pressure.
+·	Performed nursing supervision, from charge nurse to hiring authority.
+·	Supervised teams and led EHR software rollout for 500+ medical personnel.
+Aviation Survivalman | U.S. Coast Guard | Various Locations | 06/1994 – 05/2000
+·	Conducted life-saving missions as rescue swimmer and advanced EMT.
+·	Held Top Secret clearance, trained in operational readiness and crisis management.
+Education
+Bachelor of Science (Major: Nursing) | Oregon Health & Science University | Portland, OR | 05/2005 
+·	Completed rigorous math and science curriculum (physics, biology, statistics), developing strong analytical and problem-solving skills.  
+·	Relevant Coursework: Healthcare Informatics, Data Management
+Associate Degree in Nursing | Clatsop Community College | Astoria, OR | 05/2003
+·	Built foundational clinical and team-based skills through hands-on patient care experience.
+Full-Stack Development Bootcamp | 4Geeks Academy | 04/2024 
+·	Formalized skills in JavaScript, Python, React, Next.js, FastAPI, Flask, MongoDB, Node.js, SQL, and Agile methodologies to build scalable full-stack web applications.
