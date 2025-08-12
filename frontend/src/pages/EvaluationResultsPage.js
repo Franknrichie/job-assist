@@ -74,30 +74,12 @@ export default function EvaluationResultsPage() {
     };
 
     try {
+      // 1) Download the .docx
       const response = await fetch('http://localhost:8000/generate_cover_letter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-
-      // after successful download:
-      // If the user is logged in, mark this record as having a stored cover letter
-      const user = JSON.parse(localStorage.getItem('user') || 'null');
-      const jobId = localStorage.getItem('lastJobId');
-      if (user && jobId) {
-       const company = (inputs?.company_name || 'Your Company').trim();
-       const simpleText = `Dear Hiring Team at ${company},\n\n(Generated in dummy mode)\n\nSincerely,\nYour Candidate`;
-       try {
-         // tell backend to attach cover_letter_text to this result
-         await fetch('http://localhost:8000/save_cover_letter', {
-           method: 'POST',
-           headers: { 'Content-Type': 'application/json' },
-           body: JSON.stringify({ user_id: user.id, job_id: jobId, cover_letter_text: simpleText })
-         });
-       } catch (e) {
-         console.warn('Could not save cover letter to history:', e);
-       }
-      }
 
       if (!response.ok) {
         const msg = await response.text().catch(() => '');
@@ -112,6 +94,32 @@ export default function EvaluationResultsPage() {
       a.download = 'cover_letter.docx';
       a.click();
       window.URL.revokeObjectURL(url);
+
+      // 2) Save the cover letter text to history (dummy text in dev)
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      const userId = user?.user_id;
+      const jobId = localStorage.getItem('lastJobId');
+
+      if (userId && jobId) {
+        const company = (inputs?.company_name || 'Your Company').trim();
+        const simpleText =
+          `Dear Hiring Team at ${company},\n\n(Generated in dummy mode)\n\nSincerely,\nYour Candidate`;
+
+        const saveRes = await fetch('http://localhost:8000/save_cover_letter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: userId,   
+            job_id: jobId,
+            cover_letter_text: simpleText
+          })
+        });
+
+        if (!saveRes.ok) {
+          const msg = await saveRes.text().catch(() => '');
+          console.warn(`save_cover_letter failed: HTTP ${saveRes.status}`, msg);
+        }
+      }
     } catch (e) {
       alert(`Download failed:\n${e.message}`);
     }
