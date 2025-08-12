@@ -1,5 +1,10 @@
 import React from 'react';
 
+function getScore(text) {
+  const m = (text || '').match(/Score:\s*([0-9]+)/i);
+  return m ? m[1] : 'N/A';
+}
+
 export default function HistoryTable({ records, userId }) {
   return (
     <table className="table table-striped">
@@ -14,8 +19,7 @@ export default function HistoryTable({ records, userId }) {
       <tbody>
         {records.map((record, idx) => (
           <tr key={idx}>
-            {/*parse score later from evaluation_result; N/A for now */}
-            <td>N/A</td>
+            <td>{getScore(record.evaluation_result)}</td>
             <td>{record.company_name}</td>
             <td>{record.job_title}</td>
             <td>
