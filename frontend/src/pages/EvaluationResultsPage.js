@@ -1,20 +1,72 @@
-import React, { useEffect, useState } from 'react';
-import EvaluationResult from '../components/EvaluationResult';
+import React, { useEffect, useMemo, useState } from 'react';
+
+// Render at least 5 li elements for Alignments and Gaps to reserve space, CSS hides the palceholder text
+const padToFive = (arr = []) => {
+  const a = Array.isArray(arr) ? arr : [];
+  return [...a, ...Array(Math.max(0, 5 - a.length)).fill(null)];
+};
+
+// tiny parser that converts the evaluation string into structured pieces
+function parseEvaluationText(text) {
+  if (!text) return null;
+
+  // Normalize newlines
+  const t = String(text).replace(/\r\n/g, '\n');
+
+  // Score: grab the first "Score: <num>"
+  const scoreMatch = t.match(/Score:\s*([0-9]+)\b/i);
+  const score = scoreMatch ? Number(scoreMatch[1]) : null;
+
+  // Slice out the "Alignments and Gaps" block
+  const agStart = t.search(/Alignments\s+and\s+Gaps:/i);
+  let alignments = [];
+  let gaps = [];
+
+  if (agStart !== -1) {
+    const afterAG = t.slice(agStart);
+    // Collect all bullet lines under that section
+    const bullets = afterAG
+      .split('\n')
+      .map(s => s.trim())
+      .filter(s => s.startsWith('- '));
+
+    alignments = bullets
+      .filter(s => /^-+\s*Alignment:/i.test(s))
+      .map(s => s.replace(/^-\s*Alignment:\s*/i, '').trim());
+
+    gaps = bullets
+      .filter(s => /^-+\s*Gap:/i.test(s))
+      .map(s => s.replace(/^-\s*Gap:\s*/i, '').trim());
+  }
+
+  // Summary: grab everything after "Summary:" until the next --- or end
+  let summary = '';
+  const summaryIdx = t.search(/Summary:/i);
+  if (summaryIdx !== -1) {
+    const afterSummary = t.slice(summaryIdx + 'Summary:'.length);
+    const stop = afterSummary.indexOf('---');
+    summary = (stop !== -1 ? afterSummary.slice(0, stop) : afterSummary).trim();
+  }
+
+  // If we failed to find anything meaningful, return null
+  const hasContent = score || alignments.length || gaps.length || summary;
+  return hasContent ? { score, alignments, gaps, summary } : null;
+}
 
 export default function EvaluationResultsPage() {
-  const [result, setResult] = useState(null);
-  const [inputs, setInputs] = useState(null); // resume_text, job_description, company_name
+  const [raw, setRaw] = useState(null);          // raw object from localStorage (may have .evaluation)
+  const [inputs, setInputs] = useState(null);    // resume_text, job_description, company_name
 
   useEffect(() => {
     const stored = localStorage.getItem('evaluation');
-    if (stored) setResult(JSON.parse(stored));
+    if (stored) setRaw(JSON.parse(stored));
 
     const storedInputs = localStorage.getItem('evaluationInputs');
     if (storedInputs) setInputs(JSON.parse(storedInputs));
   }, []);
 
+  // Build payload and download .docx
   const handleDownload = async () => {
-    // Build the payload the backend expects (works in dummy mode too)
     const payload = {
       resume_text: inputs?.resume_text || '',
       job_description: inputs?.job_description || '',
@@ -24,10 +76,7 @@ export default function EvaluationResultsPage() {
     try {
       const response = await fetch('http://localhost:8000/generate_cover_letter', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-          // Authorization header not required by your current dummy route
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
@@ -49,30 +98,75 @@ export default function EvaluationResultsPage() {
     }
   };
 
-  if (!result) return <div className="container mt-5">Loading...</div>;
+  // Parse the evaluation string (if present)
+  const parsed = useMemo(() => {
+    const text = raw?.evaluation; // backend returns { evaluation: "..." }
+    return parseEvaluationText(text);
+  }, [raw]);
+
+  if (!raw) return <div className="container mt-5">Loading...</div>;
 
   return (
     <div className="container-xl mt-4">
-       {result.evaluation ? (
-        <div className="card-like p-3">
-          <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
-            {result.evaluation}
-          </pre>
+      {/* Top: Big Score badge */}
+      <div className="d-flex justify-content-center mb-4">
+        <div className="score-badge">
+          <div className="score-badge__number">
+            {parsed?.score ?? '—'}
+          </div>
+          <div className="score-badge__label">Alignment Score</div>
         </div>
-      ) : (
-        <EvaluationResult
-          score={result.score}
-          alignments={result.alignments || []}
-          gaps={result.gaps || []}
-          summary={result.summary || ''}
-        />
-      )}
+      </div>
 
-      <div className="text-center">
-        <button className="btn btn-success mb-3" onClick={handleDownload}>
+      {/* Middle: Alignments & Gaps side-by-side */}
+      {/* Equal-height row */}
+      <div className="row g-4 align-items-stretch">
+        <div className="col-12 col-lg-6">
+          <div className="section-card h-100 d-flex flex-column">
+            <h5 className="section-card__title">Alignments</h5>
+            <ul className="section-list mb-0 ps-4">
+              {padToFive(parsed?.alignments).map((item, i) => (
+                <li key={i} className={item ? '' : 'placeholder-bullet'}>
+                  {item || '•'}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+            
+        <div className="col-12 col-lg-6">
+          <div className="section-card h-100 d-flex flex-column">
+            <h5 className="section-card__title">Gaps</h5>
+            <ul className="section-list mb-0 ps-4">
+              {padToFive(parsed?.gaps).map((item, i) => (
+                <li key={i} className={item ? '' : 'placeholder-bullet'}>
+                  {item || '•'}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* Summary */}
+      <div className="section-card review-summary mt-4">
+        <h5 className="section-card__title">Review Summary</h5>
+        {parsed?.summary ? (
+          <p className="mb-0">{parsed.summary}</p>
+        ) : (
+          // Fallback: render the whole evaluation text if parsing failed
+          <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
+            {raw.evaluation || 'No summary available.'}
+          </pre>
+        )}
+      </div>
+
+      {/* CTA + image placeholder */}
+      <div className="text-center mt-4">
+        <button className="btn btn-primary mb-1 btn-3d" onClick={handleDownload}>
           Generate Tailored Cover Letter
         </button>
-        <img src="/logo-placeholder.png" alt="Placeholder" className="centered-logo" />
+        <img src="/main-logo.png" alt="Placeholder" className="centered-logo mt-1" />
       </div>
     </div>
   );

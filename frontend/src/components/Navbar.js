@@ -25,13 +25,13 @@ export default function Navbar() {
       {/* Left-aligned actions per your spec */}
       {user ? (
         <div className="d-flex align-items-center gap-2">
-          <Link to="/history" className="btn btn-outline-primary">History</Link>
-          <button className="btn btn-secondary" onClick={handleLogout}>Log Out</button>
+          <Link to="/history" className="btn btn-outline-primary btn-3d">History</Link>
+          <button className="btn btn-secondary btn-3d" onClick={handleLogout}>Log Out</button>
         </div>
       ) : (
         <div className="d-flex align-items-center gap-2">
-          <button className="btn btn-primary" onClick={() => setShowSignUp(true)}>Sign Up</button>
-          <button className="btn btn-outline-primary" onClick={() => setShowSignIn(true)}>Sign In</button>
+          <button className="btn btn-primary btn-3d" onClick={() => setShowSignUp(true)}>Sign Up</button>
+          <button className="btn btn-outline-primary btn-3d" onClick={() => setShowSignIn(true)}>Sign In</button>
         </div>
       )}
 

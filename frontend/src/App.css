@@ -138,3 +138,169 @@ textarea::placeholder {
   color: #adb5bd !important;
   opacity: 1 !important;
 }
+
+/* ===== 3D score badge polish ===== */
+:root {
+  /*change brand color's here */
+  --badge-base: #0d6efd;   /* primary */
+  --badge-dark: #0a58ca;   /* darker edge */
+  --badge-light: #4da3ff;  /* lighter edge */
+}
+
+.score-badge {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  border-radius: 999px;
+
+  /* 3D body (bevel via gradient + inset shadows) */
+  background: radial-gradient(120% 120% at 30% 30%, var(--badge-light) 0%, var(--badge-base) 45%, var(--badge-dark) 100%);
+  box-shadow:
+    inset 6px 6px 14px rgba(0, 0, 0, 0.18),   /* inner bevel dark */
+    inset -6px -6px 12px rgba(255, 255, 255, 0.18), /* inner bevel light */
+    0 10px 20px rgba(16, 24, 40, 0.2),        /* main drop */
+    0 2px 6px rgba(16, 24, 40, 0.15);         /* soft lift */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* subtle ring */
+  outline: 0;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* glossy specular highlight */
+.score-badge::before {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 18px;
+  right: 18px;
+  height: 42%;
+  border-radius: 999px;
+  background: radial-gradient(120% 100% at 20% 0%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.25) 40%, rgba(255, 255, 255, 0.08) 70%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  filter: blur(0.2px);
+}
+
+/* soft ground shadow under the badge */
+.score-badge::after {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  width: 70%;
+  height: 18px;
+  transform: translateX(-50%);
+  background: radial-gradient(60% 100% at 50% 50%, rgba(16, 24, 40, 0.25), rgba(16, 24, 40, 0));
+  filter: blur(2px);
+  z-index: -1;
+}
+
+/* number + label styling (white + subtle text glow for legibility) */
+.score-badge__number {
+  color: #fff;
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 800;
+  text-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.35),
+    0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.score-badge__label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.section-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+  padding: 1.25rem;
+}
+
+.section-card__title {
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.section-list {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+.section-list li {
+  margin-bottom: 0.4rem;
+}
+
+.review-summary {
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* ===== 3D / glossy buttons ===== */
+.btn-3d {
+  position: relative;
+  border: 0; /* let the glow + shadow define the edge */
+  box-shadow:
+    0 8px 18px rgba(16, 24, 40, 0.2),
+    0 2px 6px rgba(16, 24, 40, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  /* subtle gradient to add depth on top of the Bootstrap bg color */
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0));
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+}
+
+/* glossy highlight */
+.btn-3d::before {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 6px;
+  right: 6px;
+  height: 46%;
+  border-radius: inherit;
+  background: radial-gradient(120% 100% at 20% 0%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.18) 40%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+/* hover / focus lift */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .btn-3d:hover,
+  .btn-3d:focus-visible {
+    transform: translateY(-1px);
+    box-shadow:
+      0 12px 24px rgba(16, 24, 40, 0.24),
+      0 4px 10px rgba(16, 24, 40, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    filter: saturate(1.05);
+  }
+}
+
+/* pressed state */
+.btn-3d:active {
+  transform: translateY(1px);
+  box-shadow:
+    0 5px 12px rgba(16, 24, 40, 0.2),
+    0 1px 4px rgba(16, 24, 40, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* keep disabled readable */
+.btn-3d:disabled {
+  box-shadow: none;
+  filter: grayscale(0.1) brightness(0.98);
+}
+
+/* Reserve space for at least 5 bullets, hide placeholder text but keep height */
+.section-list li.placeholder-bullet {
+  visibility: hidden;      /* keeps layout space */
+  margin-bottom: 0.4rem;   /* same spacing as real items */
+}

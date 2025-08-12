@@ -112,7 +112,7 @@ export default function Home() {
       </div>
 
       <div className="d-flex justify-content-center mt-4">
-        <button className="btn btn-primary btn-lg px-5" onClick={handleEvaluate}>
+        <button className="btn btn-primary btn-lg px-5 btn-3d" onClick={handleEvaluate}>
           Evaluate Job Fit
         </button>
       </div>
