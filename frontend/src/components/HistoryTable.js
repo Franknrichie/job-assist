@@ -1,4 +1,3 @@
-// src/components/HistoryTable.js
 import React from "react";
 
 function getScoreFromEvaluation(text) {
