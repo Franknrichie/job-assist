@@ -139,6 +139,13 @@ textarea::placeholder {
   opacity: 1 !important;
 }
 
+.alignAI-logo {
+  display: block;
+  margin: 0 auto;
+  height: 250px;
+  width: auto;
+}
+
 /* ===== 3D score badge polish ===== */
 :root {
   /*change brand color's here */

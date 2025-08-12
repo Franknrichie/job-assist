@@ -163,10 +163,10 @@ export default function EvaluationResultsPage() {
 
       {/* CTA + image placeholder */}
       <div className="text-center mt-4">
-        <button className="btn btn-primary mb-1 btn-3d" onClick={handleDownload}>
+        <button className="btn btn-primary mb-0 btn-3d" onClick={handleDownload}>
           Generate Tailored Cover Letter
         </button>
-        <img src="/main-logo.png" alt="Placeholder" className="centered-logo mt-1" />
+        <img src="/AlignAI-logo.png" alt="Placeholder" className="alignAI-logo mt-0" />
       </div>
     </div>
   );

@@ -38,8 +38,8 @@ export default function SignInModal({ show, handleClose }) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Cancel</Button>
-        <Button variant="success" onClick={handleSubmit}>Sign In</Button>
+        <Button variant="secondary btn-3d" onClick={handleClose}>Cancel</Button>
+        <Button variant="success btn-3d" onClick={handleSubmit}>Sign In</Button>
       </Modal.Footer>
     </Modal>
   );

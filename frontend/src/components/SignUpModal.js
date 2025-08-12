@@ -44,8 +44,8 @@ export default function SignUpModal({ show, handleClose }) {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>Cancel</Button>
-        <Button variant="primary" onClick={handleSubmit}>Submit</Button>
+        <Button variant="secondary btn-3d" onClick={handleClose}>Cancel</Button>
+        <Button variant="primary btn-3d" onClick={handleSubmit}>Submit</Button>
       </Modal.Footer>
     </Modal>
   );

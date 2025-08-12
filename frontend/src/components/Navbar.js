@@ -19,7 +19,7 @@ export default function Navbar() {
     <nav className="navbar navbar-light bg-info shadow-sm px-3">
       <Link to="/" className="navbar-brand d-flex align-items-center gap-2">
         {/* Use public/ asset via root-relative path */}
-        <img src="/AlignAI-logo-3.png" alt="Home" height="40" />
+        <img src="/AlignAI-logo-3.png" alt="Home" height="40" className="btn-3d"/>
       </Link>
 
       {/* Left-aligned actions per your spec */}
