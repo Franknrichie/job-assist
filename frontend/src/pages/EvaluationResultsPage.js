@@ -186,7 +186,8 @@ export default function EvaluationResultsPage() {
       </div>
 
       <div className="text-center mt-4">
-        <button className="btn btn-primary mb-0 btn-3d" onClick={handleDownload}>
+        <button className="btn btn-primary mb-0 btn-3d" onClick=
+        {handleDownload}>
           Generate Tailored Cover Letter
         </button>
         <img src="/AlignAI-logo.png" alt="Placeholder" className="alignAI-logo mt-0" />

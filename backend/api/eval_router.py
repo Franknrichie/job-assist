@@ -73,6 +73,8 @@ Alignments and Gaps:
 
 Summary:
 <One paragraph summary>
+
+Use plain text. Do not use Markdown. Each bullet must start with `- Alignment:` or `- Gap:` exactly.
 ---
 """
 
