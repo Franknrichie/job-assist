@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from docx import Document
 import os
+import datetime
 
 # Load API key
 load_dotenv()
@@ -23,7 +24,7 @@ class CoverLetterRequest(BaseModel):
     job_description: str
     company_name: str
 
-# === Evaluate Fit ===
+# Evaluate Fit
 @router.post("/evaluate_fit")
 def evaluate_fit(payload: EvaluationRequest):
     system_prompt = {
@@ -73,9 +74,9 @@ Alignments and Gaps:
 
 Summary:
 <One paragraph summary>
+---
 
 Use plain text. Do not use Markdown. Each bullet must start with `- Alignment:` or `- Gap:` exactly.
----
 """
 
     try:
@@ -88,7 +89,17 @@ Use plain text. Do not use Markdown. Each bullet must start with `- Alignment:` 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# === Generate Cover Letter (text only, for saving) ===
+# Utility: build standard header date string without leading zero for days
+def _current_date_header() -> str:
+    now = datetime.datetime.now()
+    return f"{now.strftime('%B')} {now.day}, {now.year}"
+
+def _prepend_header_to_body(body_text: str) -> str:
+    date_str = _current_date_header()
+    header = f"{date_str}\n\nDear Hiring Manager,\n\n"
+    return f"{header}{body_text.strip()}"
+
+# Generate Cover Letter (text only, for saving)
 @router.post("/generate_cover_letter")
 def generate_cover_letter(payload: CoverLetterRequest):
     system_prompt = {
@@ -102,7 +113,9 @@ def generate_cover_letter(payload: CoverLetterRequest):
     }
 
     user_prompt = f"""
-Based on the following resume and job description, write a compelling one-page cover letter tailored to the company: {payload.company_name}.
+Write the BODY of a one-page cover letter tailored to the company: {payload.company_name}.
+Do NOT include the date line or the greeting — they will be added by the system.
+You SHOULD include a natural closing and signature that uses the candidate's name if present in the resume.
 
 Resume:
 \"\"\"
@@ -115,10 +128,10 @@ Job Description:
 \"\"\"
 
 Guidelines:
-- Start with a strong, natural intro paragraph.
+- Start with a strong intro paragraph.
 - Mention relevant experiences and strengths pulled from the resume.
 - Align tone with the company mission (health, tech, education, etc.).
-- End with a warm and confident closing paragraph.
+- End with a warm, confident closing and the candidate's name/signature when available.
 """
 
     try:
@@ -127,13 +140,14 @@ Guidelines:
             messages=[system_prompt, {"role": "user", "content": user_prompt}],
             temperature=0.5
         )
-        cover_text = response.choices[0].message.content.strip()
-        return {"cover_letter_text": cover_text}
+        body_text = response.choices[0].message.content.strip()
+        final_text = _prepend_header_to_body(body_text)
+        return {"cover_letter_text": final_text}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-# === Download Cover Letter as .docx ===
+# Download Cover Letter as .docx
 @router.post("/download_cover_letter_docx")
 def download_cover_letter_docx(payload: CoverLetterRequest):
     system_prompt = {
@@ -147,7 +161,9 @@ def download_cover_letter_docx(payload: CoverLetterRequest):
     }
 
     user_prompt = f"""
-Based on the following resume and job description, write a compelling one-page cover letter tailored to the company: {payload.company_name}.
+Write the BODY of a one-page cover letter tailored to the company: {payload.company_name}.
+Do NOT include the date line or the greeting — they will be added by the system.
+You SHOULD include a natural closing and signature that uses the candidate's name if present in the resume.
 
 Resume:
 \"\"\"
@@ -160,10 +176,10 @@ Job Description:
 \"\"\"
 
 Guidelines:
-- Start with a strong, natural intro paragraph.
+- Start with a strong intro paragraph.
 - Mention relevant experiences and strengths pulled from the resume.
 - Align tone with the company mission (health, tech, education, etc.).
-- End with a warm and confident closing paragraph.
+- End with a warm, confident closing and the candidate's name/signature when available.
 """
 
     try:
@@ -172,11 +188,12 @@ Guidelines:
             messages=[system_prompt, {"role": "user", "content": user_prompt}],
             temperature=0.5
         )
-        cover_text = response.choices[0].message.content.strip()
+        body_text = response.choices[0].message.content.strip()
+        final_text = _prepend_header_to_body(body_text)
 
-        # Convert to valid docx
+        # Build a valid .docx
         doc = Document()
-        for paragraph in cover_text.split("\n\n"):
+        for paragraph in final_text.split("\n\n"):
             doc.add_paragraph(paragraph.strip())
 
         file_stream = BytesIO()
