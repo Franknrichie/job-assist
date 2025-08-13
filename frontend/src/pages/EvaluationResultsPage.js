@@ -10,14 +10,10 @@ const padToFive = (arr = []) => {
 function parseEvaluationText(text) {
   if (!text) return null;
 
-  // Normalize newlines
   const t = String(text).replace(/\r\n/g, '\n');
-
-  // Score: grab the first "Score: <num>"
   const scoreMatch = t.match(/Score:\s*([0-9]+)\b/i);
   const score = scoreMatch ? Number(scoreMatch[1]) : null;
 
-  // Slice out the "Alignments and Gaps" block
   const agStart = t.search(/Alignments\s+and\s+Gaps:/i);
   let alignments = [];
   let gaps = [];
@@ -38,7 +34,6 @@ function parseEvaluationText(text) {
       .map(s => s.replace(/^-\s*Gap:\s*/i, '').trim());
   }
 
-  // Summary: grab everything after "Summary:" until the next --- or end
   let summary = '';
   const summaryIdx = t.search(/Summary:/i);
   if (summaryIdx !== -1) {
@@ -71,32 +66,43 @@ export default function EvaluationResultsPage() {
     };
 
     try {
-      // Call backend to generate the actual cover letter text
-      const generateRes = await fetch('http://localhost:8000/generate_cover_letter', {
+      // 1. Download real .docx from backend
+      const docxRes = await fetch('http://localhost:8000/download_cover_letter_docx', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
-      if (!generateRes.ok) {
-        const msg = await generateRes.text().catch(() => '');
-        alert(`Cover letter generation failed: HTTP ${generateRes.status}\n${msg}`);
+      if (!docxRes.ok) {
+        const msg = await docxRes.text().catch(() => '');
+        alert(`Cover letter download failed: HTTP ${docxRes.status}\n${msg}`);
         return;
       }
 
-      // Extract text and stream the file
-      const cover_letter_text = (await generateRes.json()).cover_letter_text;
-
-      // Download as a .docx file
-      const docBlob = new Blob([cover_letter_text], { type: 'application/msword' });
-      const url = window.URL.createObjectURL(docBlob);
+      const blob = await docxRes.blob();
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'cover_letter.docx';
       a.click();
       window.URL.revokeObjectURL(url);
 
-      // Save cover letter text to history
+      // 2. Get text version for saving
+      const textRes = await fetch('http://localhost:8000/generate_cover_letter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!textRes.ok) {
+        const msg = await textRes.text().catch(() => '');
+        console.warn(`generate_cover_letter failed: HTTP ${textRes.status}`, msg);
+        return;
+      }
+
+      const { cover_letter_text } = await textRes.json();
+
+      // 3. Save to history
       const user = JSON.parse(localStorage.getItem('user') || 'null');
       const userId = user?.user_id;
       const jobId = localStorage.getItem('lastJobId');
