@@ -86,6 +86,7 @@ Summary:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 # === Generate Cover Letter ===
 @router.post("/generate_cover_letter")
 def generate_cover_letter(payload: CoverLetterRequest):
@@ -127,20 +128,8 @@ Guidelines:
         )
         cover_text = response.choices[0].message.content.strip()
 
-        # Write cover letter to docx
-        doc = Document()
-        for paragraph in cover_text.split("\n\n"):
-            doc.add_paragraph(paragraph.strip())
-
-        file_stream = BytesIO()
-        doc.save(file_stream)
-        file_stream.seek(0)
-
-        return StreamingResponse(
-            file_stream,
-            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            headers={"Content-Disposition": "attachment; filename=cover_letter.docx"}
-        )
+        return { "cover_letter_text": cover_text }
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+

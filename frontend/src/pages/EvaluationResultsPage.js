@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-// Render at least 5 li elements for Alignments and Gaps to reserve space, CSS hides the palceholder text
+// Render at least 5 li elements for Alignments and Gaps to reserve space, CSS hides the placeholder text
 const padToFive = (arr = []) => {
   const a = Array.isArray(arr) ? arr : [];
   return [...a, ...Array(Math.max(0, 5 - a.length)).fill(null)];
@@ -24,7 +24,6 @@ function parseEvaluationText(text) {
 
   if (agStart !== -1) {
     const afterAG = t.slice(agStart);
-    // Collect all bullet lines under that section
     const bullets = afterAG
       .split('\n')
       .map(s => s.trim())
@@ -48,14 +47,13 @@ function parseEvaluationText(text) {
     summary = (stop !== -1 ? afterSummary.slice(0, stop) : afterSummary).trim();
   }
 
-  // If we failed to find anything meaningful, return null
   const hasContent = score || alignments.length || gaps.length || summary;
   return hasContent ? { score, alignments, gaps, summary } : null;
 }
 
 export default function EvaluationResultsPage() {
-  const [raw, setRaw] = useState(null);          // raw object from localStorage (may have .evaluation)
-  const [inputs, setInputs] = useState(null);    // resume_text, job_description, company_name
+  const [raw, setRaw] = useState(null);
+  const [inputs, setInputs] = useState(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('evaluation');
@@ -65,7 +63,6 @@ export default function EvaluationResultsPage() {
     if (storedInputs) setInputs(JSON.parse(storedInputs));
   }, []);
 
-  // Build payload and download .docx
   const handleDownload = async () => {
     const payload = {
       resume_text: inputs?.resume_text || '',
@@ -74,44 +71,44 @@ export default function EvaluationResultsPage() {
     };
 
     try {
-      // 1) Download the .docx
-      const response = await fetch('http://localhost:8000/generate_cover_letter', {
+      // Call backend to generate the actual cover letter text
+      const generateRes = await fetch('http://localhost:8000/generate_cover_letter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
-      if (!response.ok) {
-        const msg = await response.text().catch(() => '');
-        alert(`Cover letter generation failed: HTTP ${response.status}\n${msg}`);
+      if (!generateRes.ok) {
+        const msg = await generateRes.text().catch(() => '');
+        alert(`Cover letter generation failed: HTTP ${generateRes.status}\n${msg}`);
         return;
       }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+      // Extract text and stream the file
+      const cover_letter_text = (await generateRes.json()).cover_letter_text;
+
+      // Download as a .docx file
+      const docBlob = new Blob([cover_letter_text], { type: 'application/msword' });
+      const url = window.URL.createObjectURL(docBlob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'cover_letter.docx';
       a.click();
       window.URL.revokeObjectURL(url);
 
-      // 2) Save the cover letter text to history (dummy text in dev)
+      // Save cover letter text to history
       const user = JSON.parse(localStorage.getItem('user') || 'null');
       const userId = user?.user_id;
       const jobId = localStorage.getItem('lastJobId');
 
       if (userId && jobId) {
-        const company = (inputs?.company_name || 'Your Company').trim();
-        const simpleText =
-          `Dear Hiring Team at ${company},\n\n(Generated in dummy mode)\n\nSincerely,\nYour Candidate`;
-
         const saveRes = await fetch('http://localhost:8000/save_cover_letter', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            user_id: userId,   
+            user_id: userId,
             job_id: jobId,
-            cover_letter_text: simpleText
+            cover_letter_text
           })
         });
 
@@ -121,13 +118,12 @@ export default function EvaluationResultsPage() {
         }
       }
     } catch (e) {
-      alert(`Download failed:\n${e.message}`);
+      alert(`Cover letter generation failed:\n${e.message}`);
     }
   };
 
-  // Parse the evaluation string (if present)
   const parsed = useMemo(() => {
-    const text = raw?.evaluation; // backend returns { evaluation: "..." }
+    const text = raw?.evaluation;
     return parseEvaluationText(text);
   }, [raw]);
 
@@ -157,7 +153,7 @@ export default function EvaluationResultsPage() {
             </ul>
           </div>
         </div>
-            
+
         <div className="col-12 col-lg-6">
           <div className="section-card h-100 d-flex flex-column">
             <h5 className="section-card__title">Gaps</h5>
@@ -177,7 +173,6 @@ export default function EvaluationResultsPage() {
         {parsed?.summary ? (
           <p className="mb-0">{parsed.summary}</p>
         ) : (
-          // Fallback: render the whole evaluation text if parsing failed
           <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
             {raw.evaluation || 'No summary available.'}
           </pre>

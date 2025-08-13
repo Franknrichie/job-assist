@@ -22,7 +22,7 @@ export default function HistoryTable({ records, userId }) {
             <th scope="col">Score</th>            
             <th scope="col">Company</th>
             <th scope="col">Job Title</th>
-            <th scope="col">Download</th>
+            <th scope="col">Cover Letter</th>
             <th scope="col">Delete</th>
           </tr>
         </thead>
