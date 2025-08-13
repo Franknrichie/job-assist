@@ -1,19 +1,15 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from fastapi.responses import StreamingResponse
-import os
 from io import BytesIO
+from dotenv import load_dotenv
+from openai import OpenAI
+from docx import Document
+import os
 
-# Optional OpenAI imports if not using dummy mode
-USE_DUMMY_AI = os.getenv("USE_DUMMY_AI", "0") == "1"
-if not USE_DUMMY_AI:
-    from dotenv import load_dotenv
-    from openai import OpenAI
-    load_dotenv()
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-else:
-    # For dummy docx generation
-    from docx import Document
+# Load API key
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 router = APIRouter()
 
@@ -27,59 +23,9 @@ class CoverLetterRequest(BaseModel):
     job_description: str
     company_name: str
 
-
-def _dummy_evaluation(resume_text: str, job_description: str) -> dict:
-    sample = """---
-Score: 7
-
-Alignments and Gaps:
-- Alignment: Relevant experience overlaps with job requirements.
-- Alignment: Demonstrated problem-solving and cross-functional collaboration.
-- Alignment: Familiarity with modern tooling and documentation.
-- Gap: Specific platform or tool not explicitly listed in resume.
-- Gap: Limited direct experience with one or more required systems.
-
-Summary:
-Overall, the candidate appears to be a good match with room to grow in a few areas. The background suggests strong fundamentals and adaptability, with some targeted upskilling recommended for an excellent fit.
----"""
-    return {"evaluation": sample}
-
-
-def _dummy_cover_letter_docx(company_name: str) -> StreamingResponse:
-    # Create an in-memory .docx
-    doc = Document()
-    doc.add_paragraph(f"Dear Hiring Team at {company_name},")
-    doc.add_paragraph(
-        "I’m excited to apply for this role. My background shows a consistent track record of solving "
-        "technical problems, supporting teams, and documenting processes clearly. The position’s focus on "
-        "reliable execution and thoughtful collaboration aligns well with how I approach my work."
-    )
-    doc.add_paragraph(
-        "In my recent experience, I supported cross-functional stakeholders, analyzed issues to get to "
-        "root cause, and communicated findings concisely. I’m comfortable learning new tools quickly "
-        "and improving workflows where it helps the team succeed. I’d welcome the chance to contribute "
-        "that same energy and ownership here."
-    )
-    doc.add_paragraph("Thank you for your time and consideration.")
-    doc.add_paragraph("Sincerely,\nYour Candidate")
-
-    file_stream = BytesIO()
-    doc.save(file_stream)
-    file_stream.seek(0)
-
-    return StreamingResponse(
-        file_stream,
-        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        headers={"Content-Disposition": "attachment; filename=cover_letter.docx"}
-    )
-
-
-# evaluate_fit Route
+# === Evaluate Fit ===
 @router.post("/evaluate_fit")
 def evaluate_fit(payload: EvaluationRequest):
-    if USE_DUMMY_AI:
-        return _dummy_evaluation(payload.resume_text, payload.job_description)
-
     system_prompt = {
         "role": "system",
         "content": (
@@ -108,12 +54,12 @@ Give:
 3. A one-paragraph summary of how well the applicant fits the job
 
 Resume:
-\"\"\"
+\"\"\" 
 {payload.resume_text}
 \"\"\"
 
 Job Description:
-\"\"\"
+\"\"\" 
 {payload.job_description}
 \"\"\"
 
@@ -140,13 +86,9 @@ Summary:
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
-# generate_cover_letter Route
+# === Generate Cover Letter ===
 @router.post("/generate_cover_letter")
 def generate_cover_letter(payload: CoverLetterRequest):
-    if USE_DUMMY_AI:
-        return _dummy_cover_letter_docx(payload.company_name)
-
     system_prompt = {
         "role": "system",
         "content": (
@@ -161,12 +103,12 @@ def generate_cover_letter(payload: CoverLetterRequest):
 Based on the following resume and job description, write a compelling one-page cover letter tailored to the company: {payload.company_name}.
 
 Resume:
-\"\"\"
+\"\"\" 
 {payload.resume_text}
 \"\"\"
 
 Job Description:
-\"\"\"
+\"\"\" 
 {payload.job_description}
 \"\"\"
 
@@ -183,6 +125,22 @@ Guidelines:
             messages=[system_prompt, {"role": "user", "content": user_prompt}],
             temperature=0.5
         )
-        return {"cover_letter": response.choices[0].message.content}
+        cover_text = response.choices[0].message.content.strip()
+
+        # Write cover letter to docx
+        doc = Document()
+        for paragraph in cover_text.split("\n\n"):
+            doc.add_paragraph(paragraph.strip())
+
+        file_stream = BytesIO()
+        doc.save(file_stream)
+        file_stream.seek(0)
+
+        return StreamingResponse(
+            file_stream,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            headers={"Content-Disposition": "attachment; filename=cover_letter.docx"}
+        )
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
