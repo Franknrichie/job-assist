@@ -5,7 +5,7 @@ from sqlalchemy.dialects.postgresql import UUID
 from datetime import datetime, timezone
 import uuid
 
-from .base import Base 
+from db.session import Base 
 
 
 class JobResult(Base):

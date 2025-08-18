@@ -35,7 +35,19 @@ def upgrade() -> None:
 		sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
 	)
 
+	# Create users table
+	op.create_table(
+		'users',
+		sa.Column('id', psql.UUID(as_uuid=True), primary_key=True, nullable=False),
+		sa.Column('email', sa.String(), nullable=False),
+		sa.Column('password_hash', sa.String(), nullable=False),
+		sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+	)
+	op.create_unique_constraint('uq_users_email', 'users', ['email'])
+
 
 def downgrade() -> None:
 	"""Downgrade schema."""
+	op.drop_constraint('uq_users_email', 'users', type_='unique')
+	op.drop_table('users')
 	op.drop_table('job_results')

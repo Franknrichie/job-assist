@@ -13,6 +13,9 @@ python-dotenv
 pydantic[email]
 pydantic-settings>=2.0.0
 
+# Auth
+passlib[bcrypt]
+
 # LLM + file processing
 openai
 httpx

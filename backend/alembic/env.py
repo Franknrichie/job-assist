@@ -8,9 +8,6 @@ from alembic import context
 # Extend sys.path to include backend folder for absolute imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# Ensure Base import works
-from db.base import Base
-
 # Load Alembic config
 config = context.config
 
@@ -22,6 +19,9 @@ if database_url:
 # Enable logging if config file is present
 if config.config_file_name is not None:
 	fileConfig(config.config_file_name)
+
+# Import Base directly from db.session to avoid circular imports
+from db.session import Base  # noqa: E402
 
 # Set target metadata for 'autogenerate'
 target_metadata = Base.metadata
