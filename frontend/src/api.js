@@ -82,10 +82,13 @@ export async function deleteResult(userId, jobId, token) {
   return res.json();
 }
 
-export async function saveCoverLetter(userId, jobId, coverLetterText) {
+export async function saveCoverLetter(userId, jobId, coverLetterText, token) {
   const res = await fetch(`${BASE_URL}/save_cover_letter`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
     body: JSON.stringify({ user_id: userId, job_id: jobId, cover_letter_text: coverLetterText })
   });
   if (!res.ok) throw new Error(await res.text());
