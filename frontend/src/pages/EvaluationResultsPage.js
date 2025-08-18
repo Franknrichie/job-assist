@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { generateCoverLetter, saveCoverLetter } from "../api";
+import { generateCoverLetter, downloadCoverLetterDocx, saveCoverLetter } from "../api";
 import { useAuth } from "../context/AuthContext";
 
 // Render at least 5 li elements for Alignments and Gaps to reserve space, CSS hides the placeholder text
@@ -69,29 +69,20 @@ export default function EvaluationResultsPage() {
     };
 
     try {
-      // 1. Generate cover letter and get the blob directly
-      const blob = await generateCoverLetter(payload, user.token);
-      
-      // 2. Create and download .docx
-      const url = window.URL.createObjectURL(blob);
+      // 1. Generate cover letter text for saving to database
+      const textResponse = await generateCoverLetter(payload, user.token);
+      const { cover_letter_text } = textResponse;
+
+      // 2. Download the .docx file
+      const docxBlob = await downloadCoverLetterDocx(payload, user.token);
+      const url = window.URL.createObjectURL(docxBlob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'cover_letter.docx';
       a.click();
       window.URL.revokeObjectURL(url);
 
-      // 3. Get the text content for saving to database
-      const textContent = await blob.text();
-      let cover_letter_text;
-      try {
-        const jsonData = JSON.parse(textContent);
-        cover_letter_text = jsonData.cover_letter_text;
-      } catch (parseError) {
-        // If it's not JSON, use the text directly
-        cover_letter_text = textContent;
-      }
-
-      // 4. Save to history
+      // 3. Save to history
       const jobId = localStorage.getItem('lastJobId');
       if (user && user.user_id && jobId && cover_letter_text) {
         try {
