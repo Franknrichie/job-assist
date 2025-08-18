@@ -40,6 +40,26 @@ export async function generateCoverLetter(data, token) {
     },
     body: JSON.stringify(data)
   });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`HTTP ${res.status}: ${text}`);
+  }
+  return res.json();
+}
+
+export async function downloadCoverLetterDocx(data, token) {
+  const res = await fetch(`${BASE_URL}/download_cover_letter_docx`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`HTTP ${res.status}: ${text}`);
+  }
   return res.blob();
 }
 
