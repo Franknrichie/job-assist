@@ -69,23 +69,31 @@ export default function EvaluationResultsPage() {
     };
 
     try {
-      // 1. Generate cover letter text
-      const textResponse = await generateCoverLetter(payload, user.token);
-      const textBlob = await textResponse.blob();
-      const textData = await textBlob.text();
-      const { cover_letter_text } = JSON.parse(textData);
-
+      // 1. Generate cover letter and get the blob directly
+      const blob = await generateCoverLetter(payload, user.token);
+      
       // 2. Create and download .docx
-      const url = window.URL.createObjectURL(textBlob);
+      const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'cover_letter.docx';
       a.click();
       window.URL.revokeObjectURL(url);
 
-      // 3. Save to history
+      // 3. Get the text content for saving to database
+      const textContent = await blob.text();
+      let cover_letter_text;
+      try {
+        const jsonData = JSON.parse(textContent);
+        cover_letter_text = jsonData.cover_letter_text;
+      } catch (parseError) {
+        // If it's not JSON, use the text directly
+        cover_letter_text = textContent;
+      }
+
+      // 4. Save to history
       const jobId = localStorage.getItem('lastJobId');
-      if (user && user.user_id && jobId) {
+      if (user && user.user_id && jobId && cover_letter_text) {
         try {
           await saveCoverLetter(user.user_id, jobId, cover_letter_text, user.token);
         } catch (saveError) {
