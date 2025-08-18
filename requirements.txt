@@ -1,0 +1,27 @@
+# FastAPI core
+fastapi
+uvicorn[standard]
+
+# Database
+sqlalchemy
+asyncpg
+alembic
+psycopg2-binary
+
+# Environment configs
+python-dotenv
+pydantic[email]
+pydantic-settings>=2.0.0
+
+# Auth
+passlib[bcrypt]
+
+# LLM + file processing
+openai
+httpx
+pdfminer.six
+python-docx
+python-multipart
+
+# Dev tools (optional but helpful)
+watchfiles
