@@ -70,11 +70,6 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
                       >
                         Download
                       </a>
-                      {record.cover_letter_created_at && (
-                        <div className="small text-muted mt-1">
-                          {formatDate(record.cover_letter_created_at)}
-                        </div>
-                      )}
                     </div>
                   ) : (
                     <span className="text-muted">N/A</span>

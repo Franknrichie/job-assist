@@ -69,9 +69,12 @@ export default function EvaluationResultsPage() {
     };
 
     try {
+      console.log('Starting cover letter generation...');
+      
       // 1. Generate cover letter text for saving to database
       const textResponse = await generateCoverLetter(payload, user.token);
       const { cover_letter_text } = textResponse;
+      console.log('Cover letter text generated:', cover_letter_text ? 'Yes' : 'No');
 
       // 2. Download the .docx file
       const docxBlob = await downloadCoverLetterDocx(payload, user.token);
@@ -81,17 +84,30 @@ export default function EvaluationResultsPage() {
       a.download = 'cover_letter.docx';
       a.click();
       window.URL.revokeObjectURL(url);
+      console.log('Cover letter downloaded');
 
       // 3. Save to history
       const jobId = localStorage.getItem('lastJobId');
+      console.log('Job ID from localStorage:', jobId);
+      console.log('User ID:', user.user_id);
+      
       if (user && user.user_id && jobId && cover_letter_text) {
         try {
-          await saveCoverLetter(user.user_id, jobId, cover_letter_text, user.token);
+          const saveResult = await saveCoverLetter(user.user_id, jobId, cover_letter_text, user.token);
+          console.log('Cover letter saved successfully:', saveResult);
         } catch (saveError) {
-          console.warn(`Failed to save cover letter: ${saveError.message}`);
+          console.error('Failed to save cover letter:', saveError);
         }
+      } else {
+        console.warn('Missing required data for saving:', {
+          hasUser: !!user,
+          hasUserId: !!user?.user_id,
+          hasJobId: !!jobId,
+          hasCoverLetterText: !!cover_letter_text
+        });
       }
     } catch (e) {
+      console.error('Cover letter generation failed:', e);
       alert(`Cover letter generation failed:\n${e.message}`);
     }
   };
