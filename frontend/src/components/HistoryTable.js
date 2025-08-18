@@ -1,6 +1,6 @@
 import React from "react";
 import { Trash2 } from "lucide-react";
-import { deleteResult } from "../api";
+import { deleteResult, downloadCoverLetterUrl } from "../api";
 import { useAuth } from "../context/AuthContext";
 
 function getScoreFromEvaluation(text) {
@@ -65,7 +65,7 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
                   {record.has_cover_letter ? (
                     <div>
                       <a
-                        href={`http://localhost:8000/results/${userId}/${record.job_id}/cover_letter.docx`}
+                        href={downloadCoverLetterUrl(userId, record.job_id)}
                         className="btn btn-sm btn-secondary btn-3d"
                       >
                         Download
