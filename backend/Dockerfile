@@ -3,11 +3,13 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+# Copy requirements first for better caching
+COPY requirements.txt /app/requirements.txt
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
 
-COPY . .
+# Copy the rest of the application
+COPY . /app/
 
 ENV PYTHONPATH=/app
 
