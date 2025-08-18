@@ -1,4 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState, useEffect, useMemo } from "react";
+import { generateCoverLetter, saveCoverLetter } from "../api";
+import { useAuth } from "../context/AuthContext";
 
 // Render at least 5 li elements for Alignments and Gaps to reserve space, CSS hides the placeholder text
 const padToFive = (arr = []) => {
@@ -49,6 +51,7 @@ function parseEvaluationText(text) {
 export default function EvaluationResultsPage() {
   const [raw, setRaw] = useState(null);
   const [inputs, setInputs] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const stored = localStorage.getItem('evaluation');
@@ -66,61 +69,27 @@ export default function EvaluationResultsPage() {
     };
 
     try {
-      // 1. Download real .docx from backend
-      const docxRes = await fetch('http://localhost:8000/download_cover_letter_docx', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // 1. Generate cover letter text
+      const textResponse = await generateCoverLetter(payload, user.token);
+      const textBlob = await textResponse.blob();
+      const textData = await textBlob.text();
+      const { cover_letter_text } = JSON.parse(textData);
 
-      if (!docxRes.ok) {
-        const msg = await docxRes.text().catch(() => '');
-        alert(`Cover letter download failed: HTTP ${docxRes.status}\n${msg}`);
-        return;
-      }
-
-      const blob = await docxRes.blob();
-      const url = window.URL.createObjectURL(blob);
+      // 2. Create and download .docx
+      const url = window.URL.createObjectURL(textBlob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'cover_letter.docx';
       a.click();
       window.URL.revokeObjectURL(url);
 
-      // 2. Get text version for saving
-      const textRes = await fetch('http://localhost:8000/generate_cover_letter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      if (!textRes.ok) {
-        const msg = await textRes.text().catch(() => '');
-        console.warn(`generate_cover_letter failed: HTTP ${textRes.status}`, msg);
-        return;
-      }
-
-      const { cover_letter_text } = await textRes.json();
-
       // 3. Save to history
-      const user = JSON.parse(localStorage.getItem('user') || 'null');
-      const userId = user?.user_id;
       const jobId = localStorage.getItem('lastJobId');
-
-      if (userId && jobId) {
-        const saveRes = await fetch('http://localhost:8000/save_cover_letter', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            user_id: userId,
-            job_id: jobId,
-            cover_letter_text
-          })
-        });
-
-        if (!saveRes.ok) {
-          const msg = await saveRes.text().catch(() => '');
-          console.warn(`save_cover_letter failed: HTTP ${saveRes.status}`, msg);
+      if (user && user.user_id && jobId) {
+        try {
+          await saveCoverLetter(user.user_id, jobId, cover_letter_text, user.token);
+        } catch (saveError) {
+          console.warn(`Failed to save cover letter: ${saveError.message}`);
         }
       }
     } catch (e) {
