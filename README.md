@@ -5,56 +5,65 @@
 
 ## Features
 
-- **Upload Resume**  
+- **Resume Upload**  
   Drag and drop `.pdf`, `.docx`, or `.txt` resume files. Extracted text is used for all downstream AI evaluations.
 
-- **Paste Job Description**  
+- **Job Description Input**  
   Copy and paste job descriptions directly from job boards (e.g., Indeed, LinkedIn). URL pasting is not supported in MVP.
 
-- **Applicant Evaluation**  
-  After resume and JD submission, the AI:
+- **AI-Powered Evaluation**  
+  After resume and job description submission, the AI:
   - Returns an **Applicant Strength Score** (1–10)
   - Lists **5–7 bullet points** of strengths and gaps
   - Summarizes the overall fit in a **single paragraph**
 
 - **Cover Letter Generation**  
-  Users can generate a formal, customized cover letter based on the resume, job description, and AI feedback. The result can be downloaded as `.docx` (planned for future release).
+  Users can generate formal, customized cover letters based on the resume, job description, and AI feedback. Results can be downloaded as `.docx` files.
 
-- **User Authentication (JWT)**  
+- **User Authentication**  
   Registered users can:
   - Save past evaluations
   - View saved results (score, summary, bullet points, cover letter)
   - Generate and store cover letters tied to evaluations
+  - Delete unwanted records
 
 - **Anonymous Use**  
   Non-logged-in users can still:
-  - Upload resume + JD
+  - Upload resume + job description
   - Run AI evaluation
   - View results (not saved)
 
-## Monorepo Structure
+## Tech Stack
+
+- **Backend:** FastAPI, SQLAlchemy, PostgreSQL, bcrypt, OpenAI API
+- **Frontend:** React, Bootstrap, React Router
+- **Database:** PostgreSQL with Alembic migrations
+- **AI Model:** GPT-3.5-turbo for evaluation and letter generation
+- **Deployment:** Docker Compose (local), Render (backend), Vercel (frontend)
+
+## Project Structure
 
 ```
 job-assist/
 ├── backend/                # FastAPI backend
 │   ├── main.py             # FastAPI app entrypoint
-│   ├── api/                # Route handlers (upload, evaluate, auth, etc.)
-│   ├── core/               # Config, auth, and utility logic
-│   ├── models/             # SQLAlchemy models (users, evaluations)
-│   ├── db/                 # Postgres + pgvector setup
-│   └── prompts/            # Prompt templates for GPT
-├── frontend/               # React app (handled by frontend teammate)
-├── shared/                 # Shared utils (optional)
-├── README.md
-└── requirements.txt
+│   ├── api/                # Route handlers (auth, eval, results, resume)
+│   ├── core/               # Configuration and settings
+│   ├── db/                 # Database models and session
+│   ├── scripts/            # Database wait script
+│   ├── alembic/            # Database migrations
+│   └── requirements.txt    # Python dependencies
+├── frontend/               # React app
+│   ├── src/
+│   │   ├── components/     # React components
+│   │   ├── pages/          # Page components
+│   │   ├── context/        # Auth context
+│   │   └── api.js          # API client
+│   ├── Dockerfile          # Frontend container
+│   └── nginx.conf          # Nginx configuration
+├── docker-compose.yml      # Local development setup
+└── README.md
 ```
-
-## Tech Stack
-
-- **Backend:** FastAPI, SQLAlchemy, pgvector, JWT, OpenAI API
-- **Frontend:** React (drag/drop file input, paste job description, display results)
-- **Database:** PostgreSQL with optional `pgvector` for embeddings and history
-- **AI Model:** GPT-4 (or compatible LLM) for evaluation and letter generation
 
 ## API Endpoints
 
@@ -64,37 +73,110 @@ job-assist/
 | POST   | `/evaluate_fit`          | ❌    | AI evaluates fit (score + bullets + summary) |
 | POST   | `/register`              | ❌    | Create new user |
 | POST   | `/login`                 | ❌    | Get JWT token |
-| POST   | `/save_result`           | ✅    | Save evaluation + cover letter |
+| POST   | `/save_result`           | ✅    | Save evaluation result |
 | GET    | `/results/{user_id}`     | ✅    | Fetch all saved results |
+| DELETE | `/results/{user_id}/{job_id}` | ✅ | Delete specific result |
 | POST   | `/generate_cover_letter` | ✅    | Generate tailored cover letter |
-
-## Authentication
-
-- Passwords hashed with bcrypt
-- JWT tokens returned on login
-- Auth-protected routes require `Authorization: Bearer <token>`
+| GET    | `/results/{user_id}/{job_id}/cover_letter.docx` | ✅ | Download cover letter |
 
 ## Data Models
 
 ### Users
-- `id`, `email`, `password_hash`, `created_at`
+- `id` (UUID), `email`, `password_hash`, `created_at`
 
-### Evaluations
-- `id`, `user_id`, `job_description`, `evaluation_result`, `cover_letter`, `created_at`
+### Job Results
+- `job_id` (UUID), `user_id`, `company_name`, `job_title`, `job_description`, `resume_text`, `evaluation_result`, `cover_letter`, `created_at`
 
-## Run Locally (Backend Only)
+## Local Development
 
-```bash
-# Clone and enter the project
-git clone https://github.com/your-username/job-assist.git
-cd job-assist
+### Prerequisites
+- Docker and Docker Compose
+- Node.js 18+ (for frontend development)
 
-# Start backend + PostgreSQL with Docker Compose
-docker-compose up --build
-```
+### Quick Start
 
-The API will be available at `http://localhost:8000`.  
-Test routes via Swagger UI: `http://localhost:8000/docs`
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/job-assist.git
+   cd job-assist
+   ```
+
+2. **Set up environment variables**
+   ```bash
+   # Create .env file in project root
+   echo "OPENAI_API_KEY=your_openai_api_key_here" > .env
+   echo "JWT_SECRET=your_jwt_secret_here" >> .env
+   ```
+
+3. **Start the application**
+   ```bash
+   docker compose up -d --build
+   ```
+
+4. **Access the application**
+   - Frontend: http://localhost
+   - Backend API: http://localhost:8000
+   - API Documentation: http://localhost:8000/docs
+
+### Database Management
+
+- **View tables**: `docker compose exec db psql -U postgres -d jobassist -c "\dt"`
+- **Check users**: `docker compose exec db psql -U postgres -d jobassist -c "SELECT id, email FROM users;"`
+- **Check results**: `docker compose exec db psql -U postgres -d jobassist -c "SELECT job_id, company_name, job_title FROM job_results;"`
+
+## Deployment
+
+### Backend (Render)
+
+1. **Create a new Web Service**
+   - Connect your GitHub repository
+   - Root Directory: Leave empty (uses repo root)
+   - Build Command: `pip install -r backend/requirements.txt`
+   - Start Command: `cd backend && alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port $PORT`
+
+2. **Environment Variables**
+   ```
+   DATABASE_URL=postgresql://user:pass@host:port/dbname?sslmode=require
+   OPENAI_API_KEY=your_openai_api_key
+   JWT_SECRET=your_secure_jwt_secret
+   ALLOW_ORIGINS=https://your-frontend-domain.vercel.app
+   ALLOW_ORIGIN_REGEX=^https://.*-your-frontend-domain\.vercel\.app$
+   ```
+
+### Frontend (Vercel)
+
+1. **Import your GitHub repository**
+   - Framework Preset: Create React App
+   - Root Directory: `frontend`
+   - Build Command: `npm run build`
+   - Output Directory: `build`
+
+2. **Environment Variables**
+   ```
+   REACT_APP_API_URL=https://your-backend.onrender.com
+   ```
+
+### Database (Render PostgreSQL)
+
+1. **Create a PostgreSQL instance**
+2. **Copy the Internal Connection String** to your backend's `DATABASE_URL`
+3. **Ensure SSL mode is included** in the connection string
+
+## Development Notes
+
+- **Authentication**: Uses bcrypt for password hashing and JWT for session management
+- **CORS**: Configured to allow frontend domains and Vercel preview URLs
+- **Database**: Auto-migrates on startup using Alembic
+- **File Upload**: Supports PDF and DOCX resume formats
+- **Error Handling**: Comprehensive error responses with detailed messages
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test locally with Docker Compose
+5. Submit a pull request
 
 ---
 
