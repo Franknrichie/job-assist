@@ -31,7 +31,6 @@ def upgrade() -> None:
 		sa.Column('job_description', sa.Text(), nullable=False),
 		sa.Column('resume_text', sa.Text(), nullable=True),
 		sa.Column('evaluation_result', sa.Text(), nullable=False),
-		sa.Column('cover_letter', sa.Text(), nullable=True),
 		sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
 	)
 
@@ -45,9 +44,22 @@ def upgrade() -> None:
 	)
 	op.create_unique_constraint('uq_users_email', 'users', ['email'])
 
+	# Create cover_letters table
+	op.create_table(
+		'cover_letters',
+		sa.Column('id', psql.UUID(as_uuid=True), primary_key=True, nullable=False),
+		sa.Column('job_id', psql.UUID(as_uuid=True), nullable=False),
+		sa.Column('user_id', sa.String(), nullable=False),
+		sa.Column('cover_letter_text', sa.Text(), nullable=False),
+		sa.Column('created_at', sa.DateTime(timezone=True), nullable=True),
+	)
+	op.create_foreign_key('fk_cover_letters_job_id', 'cover_letters', 'job_results', ['job_id'], ['job_id'])
+
 
 def downgrade() -> None:
 	"""Downgrade schema."""
+	op.drop_constraint('fk_cover_letters_job_id', 'cover_letters', type_='foreignkey')
+	op.drop_table('cover_letters')
 	op.drop_constraint('uq_users_email', 'users', type_='unique')
 	op.drop_table('users')
 	op.drop_table('job_results')

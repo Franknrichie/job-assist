@@ -62,13 +62,20 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
                 <td>{record.company_name}</td>
                 <td>{record.job_title}</td>
                 <td>
-                  {record.cover_letter ? (
-                    <a
-                      href={`http://localhost:8000/results/${userId}/${record.job_id}/cover_letter.docx`}
-                      className="btn btn-sm btn-secondary btn-3d"
-                    >
-                      Download
-                    </a>
+                  {record.has_cover_letter ? (
+                    <div>
+                      <a
+                        href={`http://localhost:8000/results/${userId}/${record.job_id}/cover_letter.docx`}
+                        className="btn btn-sm btn-secondary btn-3d"
+                      >
+                        Download
+                      </a>
+                      {record.cover_letter_created_at && (
+                        <div className="small text-muted mt-1">
+                          {formatDate(record.cover_letter_created_at)}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <span className="text-muted">N/A</span>
                   )}
