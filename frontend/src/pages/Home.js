@@ -49,7 +49,6 @@ export default function Home() {
             job_description: description,
             evaluation_result: result.evaluation ?? "",
             resume_text,
-            cover_letter: null,
           },
           user.token
         );
