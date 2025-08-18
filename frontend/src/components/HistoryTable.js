@@ -1,4 +1,5 @@
 import React from "react";
+import { Trash2 } from "lucide-react";
 
 function getScoreFromEvaluation(text) {
   const m = (text || "").match(/Score:\s*([0-9]+)/i);
@@ -13,13 +14,18 @@ function formatDate(iso) {
 }
 
 export default function HistoryTable({ records, userId }) {
+  function handleDelete(jobId) {
+    console.log("Delete record with job ID:", jobId);
+    // TODO: implement actual delete logic here
+  }
+
   return (
     <div className="table-responsive">
       <table className="table table-bordered table-hover align-middle text-center">
         <thead className="table-light">
           <tr>
             <th scope="col">Date</th>
-            <th scope="col">Score</th>            
+            <th scope="col">Score</th>
             <th scope="col">Company</th>
             <th scope="col">Job Title</th>
             <th scope="col">Cover Letter</th>
@@ -36,7 +42,7 @@ export default function HistoryTable({ records, userId }) {
                   <span className="badge rounded-pill bg-info px-3 py-2 fs-5">
                     {score}
                   </span>
-                </td>                
+                </td>
                 <td>{record.company_name}</td>
                 <td>{record.job_title}</td>
                 <td>
@@ -51,13 +57,21 @@ export default function HistoryTable({ records, userId }) {
                     <span className="text-muted">N/A</span>
                   )}
                 </td>
-                <td>{/*trash icon here*/}</td>
+                <td>
+                  <button
+                    onClick={() => handleDelete(record.job_id)}
+                    className="bg-transparent border-0 p-0 text-danger"
+                    style={{ cursor: "pointer" }}
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </td>
               </tr>
             );
           })}
           {records.length === 0 && (
             <tr>
-              <td colSpan={5} className="text-muted">
+              <td colSpan={6} className="text-muted">
                 No records found
               </td>
             </tr>

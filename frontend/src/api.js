@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8000';
+const BASE_URL = (process.env.REACT_APP_API_URL || 'http://localhost:8000').replace(/\/$/, '');
 
 export async function registerUser(email, password) {
   const res = await fetch(`${BASE_URL}/register`, {
@@ -44,7 +44,7 @@ export async function generateCoverLetter(data, token) {
 }
 
 export async function saveResult(data, token) {
-  const res = await fetch(`http://localhost:8000/save_result`, {
+  const res = await fetch(`${BASE_URL}/save_result`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
