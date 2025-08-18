@@ -1,5 +1,7 @@
 import React from "react";
 import { Trash2 } from "lucide-react";
+import { deleteResult } from "../api";
+import { useAuth } from "../context/AuthContext";
 
 function getScoreFromEvaluation(text) {
   const m = (text || "").match(/Score:\s*([0-9]+)/i);
@@ -13,10 +15,24 @@ function formatDate(iso) {
   return d.toLocaleDateString();
 }
 
-export default function HistoryTable({ records, userId }) {
-  function handleDelete(jobId) {
-    console.log("Delete record with job ID:", jobId);
-    // TODO: implement actual delete logic here
+export default function HistoryTable({ records, userId, onRecordDeleted }) {
+  const { user } = useAuth();
+
+  async function handleDelete(jobId) {
+    if (!confirm("Are you sure you want to delete this record?")) {
+      return;
+    }
+
+    try {
+      await deleteResult(userId, jobId, user.token);
+      // Call the callback to refresh the data
+      if (onRecordDeleted) {
+        onRecordDeleted();
+      }
+    } catch (error) {
+      console.error("Failed to delete record:", error);
+      alert(`Failed to delete record: ${error.message}`);
+    }
   }
 
   return (

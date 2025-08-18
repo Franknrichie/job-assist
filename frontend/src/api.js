@@ -68,6 +68,20 @@ export async function fetchResults(userId, token) {
   return res.json();
 }
 
+export async function deleteResult(userId, jobId, token) {
+  const res = await fetch(`${BASE_URL}/results/${userId}/${jobId}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`HTTP ${res.status}: ${text}`);
+  }
+  return res.json();
+}
+
 export async function saveCoverLetter(userId, jobId, coverLetterText) {
   const res = await fetch(`${BASE_URL}/save_cover_letter`, {
     method: 'POST',

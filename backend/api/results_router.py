@@ -33,11 +33,7 @@ class SaveCoverLetterRequest(BaseModel):
 
 @router.post("/save_result")
 def save_result(payload: SaveResultRequest, db: Session = Depends(get_db)):
-    job_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, payload.job_description))  # Deterministic UUID
-
-    existing = db.query(JobResult).filter_by(user_id=payload.user_id, job_id=job_id).first()
-    if existing:
-        raise HTTPException(status_code=400, detail="This job result already exists for the user.")
+    job_id = str(uuid.uuid4())  # Generate unique UUID for each save
 
     result = JobResult(
         user_id=payload.user_id,

@@ -20,3 +20,16 @@ class JobResult(Base):
     evaluation_result = Column(Text, nullable=False)
     cover_letter = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    def to_dict(self):
+        return {
+            "job_id": str(self.job_id),
+            "user_id": self.user_id,
+            "company_name": self.company_name,
+            "job_title": self.job_title,
+            "job_description": self.job_description,
+            "resume_text": self.resume_text,
+            "evaluation_result": self.evaluation_result,
+            "cover_letter": self.cover_letter,
+            "created_at": self.created_at.isoformat() if self.created_at else None
+        }
