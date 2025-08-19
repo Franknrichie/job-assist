@@ -4,6 +4,12 @@
 
 **Job Assist** is an AI-powered application that helps users evaluate their fit for specific job opportunities and generate tailored cover letters. It compares a user's resume against a job description using natural language reasoning, then outputs a match score, strengths/weaknesses, a summary of fit, and the option to generate a downloadable cover letter.
 
+## 🚀 Live Application
+
+- **Frontend**: [https://job-assist-chi.vercel.app](https://job-assist-chi.vercel.app)
+- **Backend API**: [https://job-assist.onrender.com](https://job-assist.onrender.com)
+- **API Documentation**: [https://job-assist.onrender.com/docs](https://job-assist.onrender.com/docs)
+
 ## Features
 
 - **Resume Upload**  
@@ -78,7 +84,9 @@ job-assist/
 | GET    | `/results/{user_id}`     | ✅    | Fetch all saved results |
 | DELETE | `/results/{user_id}/{job_id}` | ✅ | Delete specific result |
 | POST   | `/generate_cover_letter` | ✅    | Generate tailored cover letter |
-| GET    | `/results/{user_id}/{job_id}/cover_letter.docx` | ✅ | Download cover letter |
+| POST   | `/download_cover_letter_docx` | ✅ | Download cover letter as .docx |
+| POST   | `/save_cover_letter`      | ✅    | Save cover letter to database |
+| GET    | `/results/{user_id}/{job_id}/cover_letter.docx` | ✅ | Download saved cover letter |
 
 ## Data Models
 
@@ -86,7 +94,10 @@ job-assist/
 - `id` (UUID), `email`, `password_hash`, `created_at`
 
 ### Job Results
-- `job_id` (UUID), `user_id`, `company_name`, `job_title`, `job_description`, `resume_text`, `evaluation_result`, `cover_letter`, `created_at`
+- `job_id` (UUID), `user_id`, `company_name`, `job_title`, `job_description`, `resume_text`, `evaluation_result`, `created_at`
+
+### Cover Letters
+- `id` (UUID), `job_id` (FK), `user_id`, `cover_letter_text`, `created_at`
 
 ## Local Development
 
@@ -98,7 +109,7 @@ job-assist/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/job-assist.git
+   git clone https://github.com/Cyberbot777/job-assist.git
    cd job-assist
    ```
 
@@ -124,6 +135,7 @@ job-assist/
 - **View tables**: `docker compose exec db psql -U postgres -d jobassist -c "\dt"`
 - **Check users**: `docker compose exec db psql -U postgres -d jobassist -c "SELECT id, email FROM users;"`
 - **Check results**: `docker compose exec db psql -U postgres -d jobassist -c "SELECT job_id, company_name, job_title FROM job_results;"`
+- **Check cover letters**: `docker compose exec db psql -U postgres -d jobassist -c "SELECT job_id, created_at FROM cover_letters;"`
 
 ## Deployment
 
@@ -132,7 +144,7 @@ job-assist/
 1. **Create a new Web Service**
    - Connect your GitHub repository
    - Root Directory: Leave empty (uses repo root)
-   - Build Command: `pip install -r backend/requirements.txt`
+   - Build Command: `pip install -r requirements.txt`
    - Start Command: `cd backend && alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port $PORT`
 
 2. **Environment Variables**
@@ -140,8 +152,8 @@ job-assist/
    DATABASE_URL=postgresql://user:pass@host:port/dbname?sslmode=require
    OPENAI_API_KEY=your_openai_api_key
    JWT_SECRET=your_secure_jwt_secret
-   ALLOW_ORIGINS=https://your-frontend-domain.vercel.app
-   ALLOW_ORIGIN_REGEX=^https://.*-your-frontend-domain\.vercel\.app$
+   ALLOW_ORIGINS=https://job-assist-chi.vercel.app
+   ALLOW_ORIGIN_REGEX=^https://.*-job-assist.*\.vercel\.app$
    ```
 
 ### Frontend (Vercel)
@@ -154,7 +166,7 @@ job-assist/
 
 2. **Environment Variables**
    ```
-   REACT_APP_API_URL=https://your-backend.onrender.com
+   REACT_APP_API_URL=https://job-assist.onrender.com
    ```
 
 ### Database (Render PostgreSQL)
@@ -170,6 +182,7 @@ job-assist/
 - **Database**: Auto-migrates on startup using Alembic
 - **File Upload**: Supports PDF and DOCX resume formats
 - **Error Handling**: Comprehensive error responses with detailed messages
+- **Cover Letters**: Stored in separate table with timestamps for better data organization
 
 ## Contributing
 
