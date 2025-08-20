@@ -28,7 +28,7 @@ export default function Navbar() {
       </div>
 
       {/* Center Section */}
-      <div className="position-absolute start-50 translate-middle-x mt-2">
+      <div className="d-flex justify-content-center flex-grow-1 mt-2">
         <img src="/AlignAI-logo-9.png" alt="AlignAI Logo" height="50" />
       </div>
 
