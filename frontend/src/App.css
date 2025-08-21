@@ -71,12 +71,12 @@ body {
 .alignai-logo {
   font-weight: 800;
   white-space: nowrap;
-  font-size: 1.6rem;
+  font-size: 2.6rem;
 }
 
 /* Scale title on smaller screens so it doesn't collide */
 @media (max-width: 450px) {
-  .alignai-logo { font-size: 1.25rem; }
+  .alignai-logo { font-size: 1.7rem; }
 }
 
 /* Utility to keep buttons full-width only when collapsed */
