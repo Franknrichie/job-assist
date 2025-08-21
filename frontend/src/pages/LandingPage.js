@@ -6,8 +6,7 @@ export default function LandingPage() {
 
   const openAuthModal = (which) => {
     // Broadcast so existing modal host can open the right modal
-    document.dispatchEvent(new CustomEvent("auth:open", { detail: "signup" }));
-    document.dispatchEvent(new CustomEvent("auth:open", { detail: "signin" }));
+    document.dispatchEvent(new CustomEvent("auth:open", { detail: { which } }));
   };
 
   const useAsGuest = () => {

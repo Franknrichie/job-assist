@@ -18,10 +18,18 @@ export default function AuthModalsHost() {
 
   useEffect(() => {
     const handler = (e) => {
-      const which = e?.detail;
-      if (which === "signup") openSignUp();
-      else openSignIn();
+      const raw = e?.detail;
+      const which =
+        typeof raw === "string"
+          ? raw
+          : raw && typeof raw.which === "string"
+          ? raw.which
+          : "";
+      const key = which.toLowerCase();
+      if (key === "signup") openSignUp();
+      if (key === "signin") openSignIn();
     };
+
     document.addEventListener("auth:open", handler);
     return () => document.removeEventListener("auth:open", handler);
   }, [openSignIn, openSignUp]);
