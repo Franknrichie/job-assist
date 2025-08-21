@@ -30,8 +30,7 @@ export default function LandingPage() {
                 <img
                   src="/AlignAI-logo.png"
                   alt="AlignAI Logo"
-                  style={{ width: 384, height: 384 }}
-                  className="mb-3"
+                  className="img-fluid mx-auto d-block mb-3 landing-logo"
                 />
                 <p className="text-muted mb-4">
                   Compare your resume to any job description, get a clear score, see strengths and gaps, then generate a tailored cover letter.

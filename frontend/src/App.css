@@ -439,3 +439,20 @@ table th, table td {
   background: #fff;
   border-radius: 1rem;
 }
+
+/* Landing logo */
+.landing-logo {
+  width: 100%;
+  max-width: 384px;
+  height: auto;
+  object-fit: contain;
+  aspect-ratio: 1 / 1;
+}
+
+/* Bump to exact 384px only once the viewport is comfortably wide */
+@media (min-width: 992px) {
+  .landing-logo {
+    width: 384px;
+    height: 384px;
+  }
+}
