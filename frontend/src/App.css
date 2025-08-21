@@ -403,3 +403,39 @@ table th, table td {
   vertical-align: middle;
 }
 
+/* Landing page */
+:root {
+  --landing-bg: #1A8FBD !important;
+}
+
+.landing-page {
+  min-height: 100vh;
+  background-color: var(--landing-bg);
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .landing-page {
+    padding: 40px 0;
+  }
+}
+
+.card-elevated {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 12px 24px rgba(0, 0, 0, 0.35),
+    0 6px 12px rgba(0, 0, 0, 0.2);
+  border: 0;
+  background: #fff;
+  border-radius: 1rem;
+}
+
+.card-step {
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.12);
+  border: 0;
+  background: #fff;
+  border-radius: 1rem;
+}
