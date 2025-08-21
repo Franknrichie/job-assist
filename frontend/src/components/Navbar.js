@@ -17,6 +17,23 @@ export default function Navbar() {
     navigate("/");
   };
 
+  const closeMobileMenu = () => {
+    const el = document.getElementById('mainNav');
+    if (!el) return;
+    const Collapse = window.bootstrap?.Collapse;
+    if (Collapse) {
+      const instance = Collapse.getOrCreateInstance(el);
+      instance.hide();
+    } else {
+      el.classList.remove('show');
+    }
+  };
+
+  const go = (path) => {
+    closeMobileMenu();
+    navigate(path);
+  };
+
   return (
     <nav className="navbar navbar-light navbar-expand-lg bg-info shadow-sm px-3 position-relative">
       <div className="container-fluid align-items-center flex-nowrap position-relative">
@@ -27,12 +44,12 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Center: truly centered title */}
+        {/* Center title */}
         <div className="navbar-center">
           <h1 className="alignai-logo m-0">AlignAI</h1>
         </div>
 
-        {/* Desktop actions (right-aligned, lg+) */}
+        {/* Desktop actions */}
         <div className="d-none d-lg-flex align-items-center gap-2 ms-auto">
           {user ? (
             <>
@@ -53,7 +70,7 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Hamburger (shows on < lg) */}
+        {/* Hamburger */}
         <button
           className="navbar-toggler ms-auto d-lg-none"
           type="button"
@@ -67,29 +84,22 @@ export default function Navbar() {
         </button>
 
         {/* Mobile overlay menu */}
-        <div
-          id="mainNav"
-          className="collapse d-lg-none dropdown-panel position-absolute end-0 top-100 mt-2"
-        >
+        <div id="mainNav" className="collapse d-lg-none dropdown-panel position-absolute end-0 top-100 mt-2">
           <ul className="navbar-nav small-menu">
             {user ? (
               <>
                 <li className="nav-item">
-                  <Link
-                    to="/history"
-                    className="nav-link small-menu__link"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#mainNav"
+                  <button
+                    className="nav-link small-menu__link bg-transparent border-0 w-100"
+                    onClick={() => go('/history')}
                   >
                     History
-                  </Link>
+                  </button>
                 </li>
                 <li className="nav-item">
                   <button
                     className="nav-link small-menu__link bg-transparent border-0 w-100"
-                    onClick={handleLogout}
-                    data-bs-toggle="collapse"
-                    data-bs-target="#mainNav"
+                    onClick={() => { closeMobileMenu(); handleLogout(); }}
                   >
                     Log Out
                   </button>
@@ -100,9 +110,7 @@ export default function Navbar() {
                 <li className="nav-item">
                   <button
                     className="nav-link small-menu__link bg-transparent border-0 w-100"
-                    onClick={() => setShowSignUp(true)}
-                    data-bs-toggle="collapse"
-                    data-bs-target="#mainNav"
+                    onClick={() => { closeMobileMenu(); setShowSignUp(true); }}
                   >
                     Sign Up
                   </button>
@@ -110,9 +118,7 @@ export default function Navbar() {
                 <li className="nav-item">
                   <button
                     className="nav-link small-menu__link bg-transparent border-0 w-100"
-                    onClick={() => setShowSignIn(true)}
-                    data-bs-toggle="collapse"
-                    data-bs-target="#mainNav"
+                    onClick={() => { closeMobileMenu(); setShowSignIn(true); }}
                   >
                     Sign In
                   </button>
