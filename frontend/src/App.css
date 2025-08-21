@@ -57,6 +57,92 @@ body {
   transform: scale(calc(var(--app-brand-scale) * 1.02));
 }
 
+/* Center the middle title to viewport */
+.navbar-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  transform-origin: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none; /* don't block clicks on toggler/buttons */
+}
+
+.alignai-logo {
+  font-weight: 800;
+  white-space: nowrap;
+  font-size: 1.6rem;
+}
+
+/* Scale title on smaller screens so it doesn't collide */
+@media (max-width: 450px) {
+  .alignai-logo { font-size: 1.25rem; }
+}
+
+/* Utility to keep buttons full-width only when collapsed */
+@media (min-width: 992px) {
+  .w-lg-auto { width: auto !important; }
+}
+
+/* Absolute mobile dropdown panel */
+.dropdown-panel {
+  width: min(45vw, 100px);
+  background: var(--bs-info);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: .5rem;
+  box-shadow: 0 10px 20px rgba(16,24,40,.15);
+  z-index: 1051;
+  padding: 0;
+}
+
+/* Mobile simple list menu */
+.small-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin: 0;
+  padding: .25rem 0;
+}
+
+.small-menu__link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: .6rem .75rem;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  color: #0b2e59;
+  background: transparent;
+  border: 0;
+  cursor: pointer;                  
+  transition: background 120ms ease, transform 120ms ease, color 120ms ease;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.dropdown-panel .small-menu__link:hover,
+.dropdown-panel .small-menu__link:focus,
+.dropdown-panel .small-menu__link:focus-visible {
+  background: rgba(255,255,255,0.55) !important;
+  color: #052947 !important;
+  text-decoration: none !important;
+}
+
+.dropdown-panel .small-menu__link:active {
+  background: rgba(255,255,255,0.7) !important;
+}
+
+.small-menu__link:active {
+  background: rgba(255,255,255,0.7) !important;
+  transform: translateX(-2px);
+}
+
+.small-menu .nav-item:first-child .small-menu__link {
+  border-top: 0;
+}
+
+.small-menu .nav-item:last-child .small-menu__link {
+  border-bottom: none;
+}
+
 .btn {
   border-radius: 10px;
 }
@@ -316,3 +402,4 @@ table th, table td {
   text-align: center;
   vertical-align: middle;
 }
+
