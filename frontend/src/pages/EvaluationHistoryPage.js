@@ -3,8 +3,11 @@ import { fetchResults } from '../api';
 import { useAuth } from "../context/AuthContext";
 import HistoryTable from '../components/HistoryTable';
 import { useNavigate } from 'react-router-dom';
+import { useDocumentTitle } from "../utils/useDocumentTitle";
 
 export default function EvaluationHistoryPage() {
+  useDocumentTitle("AlignAI | History");
+
   const { user } = useAuth();
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);

@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import SignUpModal from "./SignUpModal";
-import SignInModal from "./SignInModal";
+import SignUpModal from "../components/SignUpModal";
+import SignInModal from "../components/SignInModal";
 
 export default function AuthModalsHost() {
   const [showSignUp, setShowSignUp] = useState(false);

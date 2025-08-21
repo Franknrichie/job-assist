@@ -1,7 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { useDocumentTitle } from "../utils/useDocumentTitle";
 
 export default function LandingPage() {
+  useDocumentTitle("AlignAI | Welcome");
+
   const navigate = useNavigate();
 
   const openAuthModal = (which) => {

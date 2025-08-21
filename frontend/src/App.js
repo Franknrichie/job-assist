@@ -4,7 +4,7 @@ import LandingPage from "./pages/LandingPage";
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import { useAuth } from "./context/AuthContext";
-import AuthModalsHost from './components/AuthModalHost';
+import AuthModalsHost from './utils/AuthModalHost';
 import EvaluationResultsPage from './pages/EvaluationResultsPage';
 import EvaluationHistoryPage from './pages/EvaluationHistoryPage';
 
