@@ -1,6 +1,6 @@
 import React from "react";
 import { Trash2 } from "lucide-react";
-import { deleteResult, downloadCoverLetterUrl } from "../api";
+import { deleteResult, downloadCoverLetterUrl, updateApplied } from "../api";
 import { useAuth } from "../context/AuthContext";
 
 function getScoreFromEvaluation(text) {
@@ -41,6 +41,7 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
         <thead className="table-light">
           <tr>
             <th scope="col">Date</th>
+            <th scope="col">Applied</th>
             <th scope="col">Score</th>
             <th scope="col">Company</th>
             <th scope="col">Job Title</th>
@@ -54,6 +55,24 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
             return (
               <tr key={idx}>
                 <td>{formatDate(record.created_at)}</td>
+                <td>
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    title="check this box if you have applied to this job"
+                    checked={!!record.applied}
+                    onChange={async (e) => {
+                      try {
+                        await updateApplied(userId, record.job_id, e.target.checked);
+                      } catch (err) {
+                        console.error(err);
+                      } finally {
+                        // Reuse existing reload prop for simplicity
+                        onRecordDeleted && onRecordDeleted();
+                      }
+                    }}
+                  />
+                </td>
                 <td>
                   <span className="badge rounded-pill bg-info px-3 py-2 fs-5">
                     {score}
@@ -89,7 +108,7 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
           })}
           {records.length === 0 && (
             <tr>
-              <td colSpan={6} className="text-muted">
+              <td colSpan={7} className="text-muted">
                 No records found
               </td>
             </tr>

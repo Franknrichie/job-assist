@@ -16,6 +16,9 @@ router = APIRouter()
 
 # Request Schemas
 
+class AppliedUpdate(BaseModel):
+    applied: bool
+
 class SaveResultRequest(BaseModel):
     user_id: str
     company_name: str
@@ -70,6 +73,14 @@ def get_results(user_id: str, db: Session = Depends(get_db)):
     
     return {"results": result_dicts}
 
+@router.patch("/results/{user_id}/{job_id}/applied")
+def update_applied(user_id: str, job_id: str, payload: AppliedUpdate, db: Session = Depends(get_db)):
+    rec = db.query(JobResult).filter_by(user_id=user_id, job_id=job_id).first()
+    if not rec:
+        raise HTTPException(status_code=404, detail="Record not found")
+    rec.applied = bool(payload.applied)
+    db.commit()
+    return {"message": "Applied updated", "job_id": str(rec.job_id), "applied": rec.applied}
 
 @router.post("/save_cover_letter")
 def save_cover_letter(payload: SaveCoverLetterRequest, db: Session = Depends(get_db)):
