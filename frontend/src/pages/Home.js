@@ -124,6 +124,7 @@ export default function Home() {
           Evaluate Job Fit
         </button>
       </div>
+      <img src="/AlignAI-logo.png" alt="Placeholder" className="alignAI-logo mt-0" />
     </div>
   );
 }

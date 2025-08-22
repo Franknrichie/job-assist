@@ -177,7 +177,6 @@ export default function EvaluationResultsPage() {
         {handleDownload}>
           Generate Tailored Cover Letter
         </button>
-        <img src="/AlignAI-logo.png" alt="Placeholder" className="alignAI-logo mt-0" />
       </div>
     </div>
   );
