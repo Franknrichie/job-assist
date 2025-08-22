@@ -37,7 +37,7 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
 
   return (
     <div className="table-responsive">
-      <table className="table table-bordered table-hover align-middle text-center">
+      <table className="history-table responsive-stack table table-bordered table-hover table-sm align-middle text-center">
         <thead className="table-light">
           <tr>
             <th scope="col">Date</th>
@@ -54,8 +54,8 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
             const score = getScoreFromEvaluation(record.evaluation_result);
             return (
               <tr key={idx}>
-                <td>{formatDate(record.created_at)}</td>
-                <td>
+                <td data-label="Date">{formatDate(record.created_at)}</td>
+                <td data-label="Applied">
                   <input
                     type="checkbox"
                     className="form-check-input"
@@ -73,14 +73,14 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
                     }}
                   />
                 </td>
-                <td>
-                  <span className="badge rounded-pill bg-info px-3 py-2 fs-5">
-                    {score}
-                  </span>
+                <td data-label="Score">
+                  <div className="score-badge score-badge--xs mx-auto" role="img" aria-label={`Score ${score}`}>
+                    <div className="score-badge__number">{score}</div>
+                  </div>
                 </td>
-                <td>{record.company_name}</td>
-                <td>{record.job_title}</td>
-                <td>
+                <td data-label="Company">{record.company_name}</td>
+                <td data-label="Job Title">{record.job_title}</td>
+                <td data-label="Cover Letter">
                   {record.has_cover_letter ? (
                     <div>
                       <a
@@ -94,7 +94,7 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
                     <span className="text-muted">N/A</span>
                   )}
                 </td>
-                <td>
+                <td data-label="Delete" className="actions">
                   <button
                     onClick={() => handleDelete(record.job_id)}
                     className="bg-transparent border-0 p-0 text-danger"

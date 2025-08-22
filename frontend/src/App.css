@@ -311,6 +311,39 @@ textarea::placeholder {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
+/* Smaller circular score badge for tables */
+.score-badge--xs {
+  width: 40px;
+  height: 40px;
+  box-shadow:
+    inset 3px 3px 7px rgba(0, 0, 0, 0.18),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.18),
+    0 4px 10px rgba(16, 24, 40, 0.18),
+    0 1px 3px rgba(16, 24, 40, 0.12);
+}
+
+.score-badge--xs .score-badge__number {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* Tighter highlights for the tiny badge */
+.score-badge--xs::before {
+  top: 3px;
+  left: 6px;
+  right: 6px;
+  height: 36%;
+}
+
+/* In tables, center the badge and drop the ground shadow for tighter rows */
+.table .score-badge {
+  margin: 0 auto;           /* horizontal centering */
+}
+.table .score-badge::after { /* remove ground shadow to avoid visual misalignment */
+  display: none;
+}
+
 .section-card {
   background: #fff;
   border-radius: 14px;
@@ -454,5 +487,51 @@ table th, table td {
   .landing-logo {
     width: 384px;
     height: 384px;
+  }
+}
+
+/* Mobile-stacked layout for History table */
+@media (max-width: 576px) {
+  /* hide header and turn each row into a card */
+  .history-table.responsive-stack thead {
+    display: none;
+  }
+  .history-table.responsive-stack {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+  }
+  .history-table.responsive-stack tbody tr {
+    display: block;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(16, 24, 40, 0.06);
+    margin: 0;
+    padding: 6px 0;
+  }
+  .history-table.responsive-stack tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 0 !important;
+    padding: 10px 14px !important;
+    text-align: left !important;
+  }
+  .history-table.responsive-stack tbody td + td {
+    border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  }
+  /* label on the left pulled from data-label */
+  .history-table.responsive-stack tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6c757d;
+    margin-right: 12px;
+  }
+  
+  .history-table.responsive-stack .score-badge {
+    margin-left: auto;
+  }
+  
+  .history-table.responsive-stack td.actions {
+    justify-content: space-between;
   }
 }
