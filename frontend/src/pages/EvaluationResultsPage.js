@@ -75,12 +75,12 @@ export default function EvaluationResultsPage() {
       console.log('Starting cover letter generation...');
       
       // 1. Generate cover letter text for saving to database
-      const textResponse = await generateCoverLetter(payload, user.token);
+      const textResponse = await generateCoverLetter(payload, user?.token);
       const { cover_letter_text } = textResponse;
       console.log('Cover letter text generated:', cover_letter_text ? 'Yes' : 'No');
 
       // 2. Download the .docx file
-      const docxBlob = await downloadCoverLetterDocx(payload, user.token);
+      const docxBlob = await downloadCoverLetterDocx(payload, user?.token);
       const url = window.URL.createObjectURL(docxBlob);
       const a = document.createElement('a');
       a.href = url;
@@ -89,10 +89,10 @@ export default function EvaluationResultsPage() {
       window.URL.revokeObjectURL(url);
       console.log('Cover letter downloaded');
 
-      // 3. Save to history
+      // 3. Save to history (only if user is authenticated)
       const jobId = localStorage.getItem('lastJobId');
       console.log('Job ID from localStorage:', jobId);
-      console.log('User ID:', user.user_id);
+      console.log('User ID:', user?.user_id);
       
       if (user && user.user_id && jobId && cover_letter_text) {
         try {

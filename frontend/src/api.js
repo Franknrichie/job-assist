@@ -31,13 +31,18 @@ export async function evaluateFit(data) {
   return res.json();
 }
 
-export async function generateCoverLetter(data, token) {
+export async function generateCoverLetter(data, token = null) {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
   const res = await fetch(`${BASE_URL}/generate_cover_letter`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
+    headers,
     body: JSON.stringify(data)
   });
   if (!res.ok) {
@@ -47,13 +52,18 @@ export async function generateCoverLetter(data, token) {
   return res.json();
 }
 
-export async function downloadCoverLetterDocx(data, token) {
+export async function downloadCoverLetterDocx(data, token = null) {
+  const headers = {
+    'Content-Type': 'application/json'
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
   const res = await fetch(`${BASE_URL}/download_cover_letter_docx`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
+    headers,
     body: JSON.stringify(data)
   });
   if (!res.ok) {
