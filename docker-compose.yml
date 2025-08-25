@@ -1,5 +1,4 @@
-version: "3.8"
-
+version: "4.4" #was 3.8
 services:
   backend:
     build: ./backend

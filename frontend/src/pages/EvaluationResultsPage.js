@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { generateCoverLetter, downloadCoverLetterDocx, saveCoverLetter } from "../api";
 import { useAuth } from "../context/AuthContext";
+import { useDocumentTitle } from "../utils/useDocumentTitle";
 
 // Render at least 5 li elements for Alignments and Gaps to reserve space, CSS hides the placeholder text
 const padToFive = (arr = []) => {
@@ -49,6 +50,8 @@ function parseEvaluationText(text) {
 }
 
 export default function EvaluationResultsPage() {
+  useDocumentTitle("AlignAI | Results");
+
   const [raw, setRaw] = useState(null);
   const [inputs, setInputs] = useState(null);
   const { user } = useAuth();
@@ -174,7 +177,6 @@ export default function EvaluationResultsPage() {
         {handleDownload}>
           Generate Tailored Cover Letter
         </button>
-        <img src="/AlignAI-logo.png" alt="Placeholder" className="alignAI-logo mt-0" />
       </div>
     </div>
   );

@@ -57,6 +57,92 @@ body {
   transform: scale(calc(var(--app-brand-scale) * 1.02));
 }
 
+/* Center the middle title to viewport */
+.navbar-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  transform-origin: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none; /* don't block clicks on toggler/buttons */
+}
+
+.alignai-logo {
+  font-weight: 800;
+  white-space: nowrap;
+  font-size: 2.6rem;
+}
+
+/* Scale title on smaller screens so it doesn't collide */
+@media (max-width: 450px) {
+  .alignai-logo { font-size: 1.7rem; }
+}
+
+/* Utility to keep buttons full-width only when collapsed */
+@media (min-width: 992px) {
+  .w-lg-auto { width: auto !important; }
+}
+
+/* Absolute mobile dropdown panel */
+.dropdown-panel {
+  width: min(45vw, 100px);
+  background: var(--bs-info);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: .5rem;
+  box-shadow: 0 10px 20px rgba(16,24,40,.15);
+  z-index: 1051;
+  padding: 0;
+}
+
+/* Mobile simple list menu */
+.small-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin: 0;
+  padding: .25rem 0;
+}
+
+.small-menu__link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: .6rem .75rem;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  color: #0b2e59;
+  background: transparent;
+  border: 0;
+  cursor: pointer;                  
+  transition: background 120ms ease, transform 120ms ease, color 120ms ease;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+.dropdown-panel .small-menu__link:hover,
+.dropdown-panel .small-menu__link:focus,
+.dropdown-panel .small-menu__link:focus-visible {
+  background: rgba(255,255,255,0.55) !important;
+  color: #052947 !important;
+  text-decoration: none !important;
+}
+
+.dropdown-panel .small-menu__link:active {
+  background: rgba(255,255,255,0.7) !important;
+}
+
+.small-menu__link:active {
+  background: rgba(255,255,255,0.7) !important;
+  transform: translateX(-2px);
+}
+
+.small-menu .nav-item:first-child .small-menu__link {
+  border-top: 0;
+}
+
+.small-menu .nav-item:last-child .small-menu__link {
+  border-bottom: none;
+}
+
 .btn {
   border-radius: 10px;
 }
@@ -225,6 +311,39 @@ textarea::placeholder {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
 }
 
+/* Smaller circular score badge for tables */
+.score-badge--xs {
+  width: 40px;
+  height: 40px;
+  box-shadow:
+    inset 3px 3px 7px rgba(0, 0, 0, 0.18),
+    inset -3px -3px 6px rgba(255, 255, 255, 0.18),
+    0 4px 10px rgba(16, 24, 40, 0.18),
+    0 1px 3px rgba(16, 24, 40, 0.12);
+}
+
+.score-badge--xs .score-badge__number {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 700;
+}
+
+/* Tighter highlights for the tiny badge */
+.score-badge--xs::before {
+  top: 3px;
+  left: 6px;
+  right: 6px;
+  height: 36%;
+}
+
+/* In tables, center the badge and drop the ground shadow for tighter rows */
+.table .score-badge {
+  margin: 0 auto;           /* horizontal centering */
+}
+.table .score-badge::after { /* remove ground shadow to avoid visual misalignment */
+  display: none;
+}
+
 .section-card {
   background: #fff;
   border-radius: 14px;
@@ -315,4 +434,104 @@ textarea::placeholder {
 table th, table td {
   text-align: center;
   vertical-align: middle;
+}
+
+/* Landing page */
+:root {
+  --landing-bg: #1A8FBD !important;
+}
+
+.landing-page {
+  min-height: 100vh;
+  background-color: var(--landing-bg);
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .landing-page {
+    padding: 40px 0;
+  }
+}
+
+.card-elevated {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 12px 24px rgba(0, 0, 0, 0.35),
+    0 6px 12px rgba(0, 0, 0, 0.2);
+  border: 0;
+  background: #fff;
+  border-radius: 1rem;
+}
+
+.card-step {
+  box-shadow:
+    0 6px 16px rgba(0, 0, 0, 0.18),
+    0 2px 6px rgba(0, 0, 0, 0.12);
+  border: 0;
+  background: #fff;
+  border-radius: 1rem;
+}
+
+/* Landing logo */
+.landing-logo {
+  width: 100%;
+  max-width: 384px;
+  height: auto;
+  object-fit: contain;
+  aspect-ratio: 1 / 1;
+}
+
+/* Bump to exact 384px only once the viewport is comfortably wide */
+@media (min-width: 992px) {
+  .landing-logo {
+    width: 384px;
+    height: 384px;
+  }
+}
+
+/* Mobile-stacked layout for History table */
+@media (max-width: 576px) {
+  /* hide header and turn each row into a card */
+  .history-table.responsive-stack thead {
+    display: none;
+  }
+  .history-table.responsive-stack {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+  }
+  .history-table.responsive-stack tbody tr {
+    display: block;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(16, 24, 40, 0.06);
+    margin: 0;
+    padding: 6px 0;
+  }
+  .history-table.responsive-stack tbody td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 0 !important;
+    padding: 10px 14px !important;
+    text-align: left !important;
+  }
+  .history-table.responsive-stack tbody td + td {
+    border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  }
+  /* label on the left pulled from data-label */
+  .history-table.responsive-stack tbody td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #6c757d;
+    margin-right: 12px;
+  }
+  
+  .history-table.responsive-stack .score-badge {
+    margin-left: auto;
+  }
+  
+  .history-table.responsive-stack td.actions {
+    justify-content: space-between;
+  }
 }

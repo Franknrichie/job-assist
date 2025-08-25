@@ -132,3 +132,16 @@ export async function uploadResume(file) {
   }
   return res.json();
 }
+
+export async function updateApplied(userId, jobId, applied) {
+  const res = await fetch(`${BASE_URL}/results/${userId}/${jobId}/applied`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ applied })
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`HTTP ${res.status}: ${text}`);
+  }
+  return res.json();
+}

@@ -2,9 +2,13 @@ import React, { useState } from 'react';
 import { Modal, Button, Form, Alert } from 'react-bootstrap';
 import { loginUser } from '../api';
 import { useAuth } from "../context/AuthContext";
+import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function SignInModal({ show, handleClose }) {
   const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();  
+
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,7 +41,11 @@ export default function SignInModal({ show, handleClose }) {
         return;
       }
       login({ user_id: res.user_id });
-      // Close and reset after successful login
+      // Clear guest mode and navigate to Home or the original protected route
+      sessionStorage.removeItem('alignai_guest');
+      const from =
+        (location?.state && location.state.from && location.state.from.pathname) || '/';
+      navigate(from, { replace: true });
       handleClose();
       reset();
     } catch (err) {

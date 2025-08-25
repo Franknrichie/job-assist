@@ -1,6 +1,6 @@
 import React from "react";
 import { Trash2 } from "lucide-react";
-import { deleteResult, downloadCoverLetterUrl } from "../api";
+import { deleteResult, downloadCoverLetterUrl, updateApplied } from "../api";
 import { useAuth } from "../context/AuthContext";
 
 function getScoreFromEvaluation(text) {
@@ -37,10 +37,11 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
 
   return (
     <div className="table-responsive">
-      <table className="table table-bordered table-hover align-middle text-center">
+      <table className="history-table responsive-stack table table-bordered table-hover table-sm align-middle text-center">
         <thead className="table-light">
           <tr>
             <th scope="col">Date</th>
+            <th scope="col">Applied</th>
             <th scope="col">Score</th>
             <th scope="col">Company</th>
             <th scope="col">Job Title</th>
@@ -53,15 +54,33 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
             const score = getScoreFromEvaluation(record.evaluation_result);
             return (
               <tr key={idx}>
-                <td>{formatDate(record.created_at)}</td>
-                <td>
-                  <span className="badge rounded-pill bg-info px-3 py-2 fs-5">
-                    {score}
-                  </span>
+                <td data-label="Date">{formatDate(record.created_at)}</td>
+                <td data-label="Applied">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    title="check this box if you have applied to this job"
+                    checked={!!record.applied}
+                    onChange={async (e) => {
+                      try {
+                        await updateApplied(userId, record.job_id, e.target.checked);
+                      } catch (err) {
+                        console.error(err);
+                      } finally {
+                        // Reuse existing reload prop for simplicity
+                        onRecordDeleted && onRecordDeleted();
+                      }
+                    }}
+                  />
                 </td>
-                <td>{record.company_name}</td>
-                <td>{record.job_title}</td>
-                <td>
+                <td data-label="Score">
+                  <div className="score-badge score-badge--xs mx-auto" role="img" aria-label={`Score ${score}`}>
+                    <div className="score-badge__number">{score}</div>
+                  </div>
+                </td>
+                <td data-label="Company">{record.company_name}</td>
+                <td data-label="Job Title">{record.job_title}</td>
+                <td data-label="Cover Letter">
                   {record.has_cover_letter ? (
                     <div>
                       <a
@@ -75,7 +94,7 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
                     <span className="text-muted">N/A</span>
                   )}
                 </td>
-                <td>
+                <td data-label="Delete" className="actions">
                   <button
                     onClick={() => handleDelete(record.job_id)}
                     className="bg-transparent border-0 p-0 text-danger"
@@ -89,7 +108,7 @@ export default function HistoryTable({ records, userId, onRecordDeleted }) {
           })}
           {records.length === 0 && (
             <tr>
-              <td colSpan={6} className="text-muted">
+              <td colSpan={7} className="text-muted">
                 No records found
               </td>
             </tr>

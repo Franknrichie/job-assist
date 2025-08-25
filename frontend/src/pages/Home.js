@@ -4,8 +4,11 @@ import ResumeInput from "../components/ResumeInput";
 import JobDescriptionInput from "../components/JobDescriptionInput";
 import { evaluateFit, saveResult, uploadResume } from "../api";
 import { useAuth } from "../context/AuthContext";
+import { useDocumentTitle } from "../utils/useDocumentTitle";
 
 export default function Home() {
+  useDocumentTitle("AlignAI | Home");
+
   const [resumeData, setResumeData] = useState(""); // text (MVP)
   const [company, setCompany] = useState("");
   const [title, setTitle] = useState("");
@@ -121,6 +124,7 @@ export default function Home() {
           Evaluate Job Fit
         </button>
       </div>
+      <img src="/AlignAI-logo.png" alt="Placeholder" className="alignAI-logo mt-0" />
     </div>
   );
 }
