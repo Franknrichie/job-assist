@@ -98,6 +98,8 @@ export default function Home() {
                   alert(`Failed to upload resume: ${e.message}`);
                 }
               }}
+              formId="job-details-form"
+              required
             />
           </div>
         </div>

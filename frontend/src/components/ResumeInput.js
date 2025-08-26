@@ -1,6 +1,13 @@
 import React, { useRef } from "react";
 
-export default function ResumeInput({ value, onChange, onFileDrop }) {
+export default function ResumeInput({
+  value,
+  onChange,
+  onFileDrop,
+  formId = "job-details-form",
+  required = true
+}) {
+
   const dropRef = useRef(null);
 
   const handleDrop = (e) => {
@@ -36,6 +43,12 @@ export default function ResumeInput({ value, onChange, onFileDrop }) {
           placeholder="Paste your resume here or drop a .pdf/.docx file"
           value={value}
           onChange={(e) => onChange(e.target.value)}
+          name="resume_text"
+          form={formId}
+          required={required}
+          aria-required={required ? "true" : undefined}
+          title="Resume is required"
+          pattern=".*\S.*"          
         />
       </div>
     </div>
