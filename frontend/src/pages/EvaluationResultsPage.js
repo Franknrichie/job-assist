@@ -124,57 +124,73 @@ export default function EvaluationResultsPage() {
 
   return (
     <div className="container-xl mt-4">
-      <div className="d-flex justify-content-center mb-4">
-        <div className="score-badge">
-          <div className="score-badge__number">
-            {parsed?.score ?? '—'}
+      <div className="row g-4">
+        {/* Left column on desktop, first on mobile */}
+        <div className="col-12 col-lg-4 results-left">
+          <div className="d-flex justify-content-center mt-3 mb-4">
+            <div className="score-badge">
+              <div className="score-badge__number">
+                {parsed?.score ?? 'N/A'}
+              </div>
+              <div className="score-badge__label">Alignment Score</div>
+            </div>
           </div>
-          <div className="score-badge__label">Alignment Score</div>
+          {/* Show the button here only on desktop */}
+          <div className="d-none d-lg-flex justify-content-center">
+            <button className="btn btn-secondary btn-3d results-cta-square"
+              onClick={handleDownload}>
+              <span>Generate</span>
+              <span>Tailored</span>
+              <span>Cover Letter</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Right column on desktop, second on mobile */}
+        <div className="col-12 col-lg-8 results-pane">
+          <div className="row g-4 align-items-stretch">
+            <div className="col-12 col-lg-6">
+              <div className="section-card h-100 d-flex flex-column">
+                <h5 className="section-card__title">Alignments</h5>
+                <ul className="section-list mb-0 ps-4">
+                  {padToFive(parsed?.alignments).map((item, i) => (
+                    <li key={i} className={item ? '' : 'placeholder-bullet'}>
+                      {item || '•'}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="col-12 col-lg-6">
+              <div className="section-card h-100 d-flex flex-column">
+                <h5 className="section-card__title">Gaps</h5>
+                <ul className="section-list mb-0 ps-4">
+                  {padToFive(parsed?.gaps).map((item, i) => (
+                    <li key={i} className={item ? '' : 'placeholder-bullet'}>
+                      {item || '•'}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div className="section-card review-summary mt-4">
+            <h5 className="section-card__title">Review Summary</h5>
+            {parsed?.summary ? (
+              <p className="mb-0">{parsed.summary}</p>
+            ) : (
+              <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
+                {raw.evaluation || 'No summary available.'}
+              </pre>
+            )}
+          </div>
         </div>
       </div>
 
-      <div className="row g-4 align-items-stretch">
-        <div className="col-12 col-lg-6">
-          <div className="section-card h-100 d-flex flex-column">
-            <h5 className="section-card__title">Alignments</h5>
-            <ul className="section-list mb-0 ps-4">
-              {padToFive(parsed?.alignments).map((item, i) => (
-                <li key={i} className={item ? '' : 'placeholder-bullet'}>
-                  {item || '•'}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-
-        <div className="col-12 col-lg-6">
-          <div className="section-card h-100 d-flex flex-column">
-            <h5 className="section-card__title">Gaps</h5>
-            <ul className="section-list mb-0 ps-4">
-              {padToFive(parsed?.gaps).map((item, i) => (
-                <li key={i} className={item ? '' : 'placeholder-bullet'}>
-                  {item || '•'}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div className="section-card review-summary mt-4">
-        <h5 className="section-card__title">Review Summary</h5>
-        {parsed?.summary ? (
-          <p className="mb-0">{parsed.summary}</p>
-        ) : (
-          <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>
-            {raw.evaluation || 'No summary available.'}
-          </pre>
-        )}
-      </div>
-
-      <div className="text-center mt-4">
-        <button className="btn btn-primary mb-0 btn-3d" onClick=
-        {handleDownload}>
+      {/* Keep the original button position on mobile only */}
+      <div className="text-center mt-3 mb-3 d-lg-none">
+        <button className="btn btn-secondary btn-3d" onClick={handleDownload}>
           Generate Tailored Cover Letter
         </button>
       </div>

@@ -227,25 +227,30 @@ textarea::placeholder {
 
 /* ===== 3D score badge polish ===== */
 :root {
-  /*change brand color's here */
   --badge-base: #0d6efd;   /* primary */
   --badge-dark: #0a58ca;   /* darker edge */
-  --badge-light: #4da3ff;  /* lighter edge */
+  --badge-light: #5ab1ff;  /* lighter edge */
 }
 
 .score-badge {
   position: relative;
-  width: 160px;
-  height: 160px;
-  border-radius: 999px;
-
+  width: 340px;
+  height: 340px;
+  border-radius: 9999px;
+  overflow:hidden;
   /* 3D body (bevel via gradient + inset shadows) */
-  background: radial-gradient(120% 120% at 30% 30%, var(--badge-light) 0%, var(--badge-base) 45%, var(--badge-dark) 100%);
+  background: 
+    radial-gradient(120% 120% at 30% 30%, 
+    var(--badge-light) 0%, 
+    var(--badge-base) 45%, 
+    var(--badge-dark) 100%);
   box-shadow:
     inset 6px 6px 14px rgba(0, 0, 0, 0.18),   /* inner bevel dark */
     inset -6px -6px 12px rgba(255, 255, 255, 0.18), /* inner bevel light */
     0 10px 20px rgba(16, 24, 40, 0.2),        /* main drop */
-    0 2px 6px rgba(16, 24, 40, 0.15);         /* soft lift */
+    0 2px 6px rgba(16, 24, 40, 0.14);         /* soft lift */
+  outline: 0;
+  border: 1px solid rgba(255, 255, 255, 0.35);  
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -260,14 +265,19 @@ textarea::placeholder {
 .score-badge::before {
   content: "";
   position: absolute;
-  top: 10px;
-  left: 18px;
-  right: 18px;
-  height: 42%;
-  border-radius: 999px;
-  background: radial-gradient(120% 100% at 20% 0%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.25) 40%, rgba(255, 255, 255, 0.08) 70%, rgba(255, 255, 255, 0) 100%);
+  top: 0;
+  left: 0;
+  right: 8%;
+  height: 38%;
+  border-radius: 9999px;
+  background:
+    radial-gradient(120% 100% at 18% 0%, 
+    rgba(255, 255, 255, 0.55) 0%, 
+    rgba(255, 255, 255, 0.20) 38%, 
+    rgba(255, 255, 255, 0.06) 68%,
+    rgba(255, 255, 255, 0) 100%);
   pointer-events: none;
-  filter: blur(0.2px);
+  filter: blur(0.6px);
 }
 
 /* soft ground shadow under the badge */
@@ -279,7 +289,10 @@ textarea::placeholder {
   width: 70%;
   height: 18px;
   transform: translateX(-50%);
-  background: radial-gradient(60% 100% at 50% 50%, rgba(16, 24, 40, 0.25), rgba(16, 24, 40, 0));
+  background:
+    radial-gradient(60% 100% at 50% 50%, 
+    rgba(16, 24, 40, 0.22), 
+    rgba(16, 24, 40, 0));
   filter: blur(2px);
   z-index: -1;
 }
@@ -287,21 +300,23 @@ textarea::placeholder {
 /* number + label styling (white + subtle text glow for legibility) */
 .score-badge__number {
   color: #fff;
-  font-size: 56px;
+  font-size: 140px;
   line-height: 1;
   font-weight: 800;
+  letter-spacing: -0.01em;
   text-shadow:
     0 1px 2px rgba(0, 0, 0, 0.35),
-    0 0 1px rgba(255, 255, 255, 0.15);
+    0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 .score-badge__label {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 12px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 18px;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-top: 4px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  margin-top: 14px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
 }
 
 /* Smaller circular score badge for tables */
@@ -526,5 +541,46 @@ table th, table td {
   
   .history-table.responsive-stack td.actions {
     justify-content: space-between;
+  }
+}
+
+/* Results page desktop sizing */
+@media (min-width: 992px) {
+  .results-pane .section-card { min-height: 320px; }
+  .results-pane .review-summary { min-height: 200px; }
+}
+
+/* Results left rail layout and square CTA on desktop */
+@media (min-width: 992px) {
+  .results-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* a bit more space under the badge */
+  .results-left .score-badge {
+    margin-bottom: 5rem;
+  }
+
+  /* square, centered CTA button */
+  .results-cta-square {
+    width: 160px;
+    height: 160px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.25;
+    white-space: normal;
+    padding: 0.75rem;
+    /* keep the 3D effect from .btn-3d, this only shapes it */
+  }
+
+  .results-cta-square span {
+    display: block;
+    font-weight: 600;
   }
 }
