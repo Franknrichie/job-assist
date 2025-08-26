@@ -344,10 +344,6 @@ textarea::placeholder {
   height: 36%;
 }
 
-/* In tables, center the badge and drop the ground shadow for tighter rows */
-.table .score-badge {
-  margin: 0 auto;           /* horizontal centering */
-}
 .table .score-badge::after { /* remove ground shadow to avoid visual misalignment */
   display: none;
 }
@@ -536,7 +532,7 @@ table th, table td {
   }
   
   .history-table.responsive-stack .score-badge {
-    margin-left: auto;
+    margin: 0 0 0 auto !important
   }
   
   .history-table.responsive-stack td.actions {
