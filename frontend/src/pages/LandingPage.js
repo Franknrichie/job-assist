@@ -22,7 +22,7 @@ export default function LandingPage() {
 
   return (
     <div className="landing-page">
-      <div className="container py-5">
+      <div className="container py-0">
         <div className="row justify-content-center">
           <div className="col-12 col-lg-8">
             <div className="card card-elevated rounded-4">
