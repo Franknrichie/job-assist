@@ -4,7 +4,7 @@ import SignUpModal from "./SignUpModal";
 import SignInModal from "./SignInModal";
 import { useAuth } from "../context/AuthContext";
 
-export default function Navbar() {
+export default function Navbar({ isAuthenticated, onLogout }) {
   const { user, logout } = useAuth();
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
@@ -13,8 +13,14 @@ export default function Navbar() {
   const handleLogout = () => {
     const confirmLogout = window.confirm("Are you sure you want to log out?");
     if (!confirmLogout) return;
-    logout();
-    navigate("/");
+    if (onLogout) {
+      onLogout();                         // AppChrome will clear guest and go to /welcome with replace
+    } else {
+      // local fallback if Navbar is ever used without AppChrome
+      try { sessionStorage.removeItem("alignai_guest"); } catch {}
+      logout();
+      navigate("/welcome", { replace: true });
+    }
   };
 
   const closeMobileMenu = () => {
@@ -51,7 +57,7 @@ export default function Navbar() {
 
         {/* Desktop actions */}
         <div className="d-none d-lg-flex align-items-center gap-2 ms-auto">
-          {user ? (
+          {(isAuthenticated ?? !!user) ? (
             <>
               <Link to="/history" className="btn btn-outline-primary btn-3d">History</Link>
               <button className="btn btn-secondary btn-3d" onClick={handleLogout}>
