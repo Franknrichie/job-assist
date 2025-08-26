@@ -9,16 +9,17 @@ import { useDocumentTitle } from "../utils/useDocumentTitle";
 export default function Home() {
   useDocumentTitle("AlignAI | Home");
 
-  const [resumeData, setResumeData] = useState(""); // text (MVP)
+  const [resumeData, setResumeData] = useState("");
   const [company, setCompany] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const handleEvaluate = async (e) => {
+    // Require Company, Job Title, and Job Description
+    e?.preventDefault();
 
-  const handleEvaluate = async () => {
-    // For MVP we're sending text. (If resumeData is a File, add the upload step later.)
     const resume_text =
       typeof resumeData === "string" ? resumeData : "";
 
@@ -28,8 +29,8 @@ export default function Home() {
       JSON.stringify({
         resume_text,
         job_description: description,
-        company_name: company, // not yet required by backend
-        job_title: title, // not yet required by backend
+        company_name: company, 
+        job_title: title, 
       })
     );
 
@@ -114,13 +115,20 @@ export default function Home() {
               setTitle={setTitle}
               description={description}
               setDescription={setDescription}
+              onSubmit={handleEvaluate}
+              formId="job-details-form"
             />
           </div>
         </div>
       </div>
 
       <div className="d-flex justify-content-center mt-4">
-        <button className="btn btn-primary btn-lg px-5 btn-3d" onClick={handleEvaluate}>
+        <button
+          type="submit"
+          form="job-details-form"
+          className="btn btn-primary btn-lg px-5 btn-3d"
+          title="Evaluate your job fit"
+        >
           Evaluate Job Fit
         </button>
       </div>

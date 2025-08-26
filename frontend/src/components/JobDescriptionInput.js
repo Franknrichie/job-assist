@@ -6,10 +6,12 @@ export default function JobDescriptionInput({
   title,
   setTitle,
   description,
-  setDescription
+  setDescription,
+  onSubmit,
+  formId = "job-details-form"
 }) {
   return (
-    <div className="jd-grid">
+    <form id={formId} className="jd-grid" onSubmit={onSubmit}>
       <div className="mb-3">
         <label className="form-label">Company Name</label>
         <input
@@ -17,6 +19,11 @@ export default function JobDescriptionInput({
           value={company}
           onChange={(e) => setCompany(e.target.value)}
           placeholder="e.g., Acme Corp"
+          name="company"
+          required
+          aria-required="true"
+          autoComplete="organization"
+          pattern="\S+.*"
         />
       </div>
 
@@ -27,6 +34,11 @@ export default function JobDescriptionInput({
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g., Software Engineer"
+          name="job_title"
+          required
+          aria-required="true"
+          autoComplete="organization-title"
+          pattern="\S+.*"         
         />
       </div>
 
@@ -37,8 +49,12 @@ export default function JobDescriptionInput({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Paste the job description here"
+          name="job_description"
+          required
+          aria-required="true"
+          pattern="\S+.*"
         />
       </div>
-    </div>
+    </form>
   );
 }
