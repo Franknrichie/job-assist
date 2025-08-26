@@ -15,10 +15,12 @@ export default function Home() {
   const [description, setDescription] = useState("");
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [isEvaluating, setIsEvaluating] = useState(false);
 
   const handleEvaluate = async (e) => {
-    // Require Company, Job Title, and Job Description
     e?.preventDefault();
+    if (isEvaluating) return;
+    setIsEvaluating(true);
 
     const resume_text =
       typeof resumeData === "string" ? resumeData : "";
@@ -66,6 +68,8 @@ export default function Home() {
       navigate("/results");
     } catch (e) {
       alert(`Evaluation failed:\n${e.message}`);
+    } finally {
+      setIsEvaluating(false);
     }
   };
 
@@ -129,9 +133,18 @@ export default function Home() {
           type="submit"
           form="job-details-form"
           className="btn btn-primary btn-lg px-5 btn-3d"
-          title="Evaluate your job fit"
+          onClick={handleEvaluate}
+          disabled={isEvaluating}
+          aria-busy={isEvaluating}
         >
-          Evaluate Job Fit
+          {isEvaluating ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Evaluating…
+            </>
+          ) : (
+            "Evaluate Job Fit"
+          )}
         </button>
       </div>
     </div>

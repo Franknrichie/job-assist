@@ -584,3 +584,14 @@ table th, table td {
     font-weight: 600;
   }
 }
+
+/* Square CTA spinner sizing */
+@media (min-width: 992px) {
+  .results-cta-square .spinner-border {
+    width: 2rem;
+    height: 2rem;
+  }
+  .results-cta-square[disabled] {
+    cursor: progress;
+  }
+}

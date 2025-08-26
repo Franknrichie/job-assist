@@ -55,6 +55,7 @@ export default function EvaluationResultsPage() {
   const [raw, setRaw] = useState(null);
   const [inputs, setInputs] = useState(null);
   const { user } = useAuth();
+  const [isGenerating, setIsGenerating] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('evaluation');
@@ -65,6 +66,8 @@ export default function EvaluationResultsPage() {
   }, []);
 
   const handleDownload = async () => {
+    if (isGenerating) return;
+    setIsGenerating(true);
     const payload = {
       resume_text: inputs?.resume_text || '',
       job_description: inputs?.job_description || '',
@@ -112,6 +115,8 @@ export default function EvaluationResultsPage() {
     } catch (e) {
       console.error('Cover letter generation failed:', e);
       alert(`Cover letter generation failed:\n${e.message}`);
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -123,7 +128,7 @@ export default function EvaluationResultsPage() {
   if (!raw) return <div className="container mt-5">Loading...</div>;
 
   return (
-    <div className="container-xl mt-4">
+    <div className="container-xl mt-5" aria-busy={isGenerating ? "true" : "false"}>
       <div className="row g-4">
         {/* Left column on desktop, first on mobile */}
         <div className="col-12 col-lg-4 results-left">
@@ -138,10 +143,21 @@ export default function EvaluationResultsPage() {
           {/* Show the button here only on desktop */}
           <div className="d-none d-lg-flex justify-content-center">
             <button className="btn btn-secondary btn-3d results-cta-square"
-              onClick={handleDownload}>
-              <span>Generate</span>
-              <span>Tailored</span>
-              <span>Cover Letter</span>
+              onClick={handleDownload}
+              disabled={isGenerating}
+              aria-busy={isGenerating}>
+              {isGenerating ? (
+                <>
+                  <span className="spinner-border" role="status" aria-hidden="true"></span>
+                  <span className="mt-2 fw-semibold">Generating…</span>
+                </>
+              ) : (
+                <>
+                  <span>Generate</span>
+                  <span>Tailored</span>
+                  <span>Cover Letter</span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -190,8 +206,20 @@ export default function EvaluationResultsPage() {
 
       {/* Keep the original button position on mobile only */}
       <div className="text-center mt-3 mb-3 d-lg-none">
-        <button className="btn btn-secondary btn-3d" onClick={handleDownload}>
-          Generate Tailored Cover Letter
+        <button
+          className="btn btn-secondary btn-3d"
+          onClick={handleDownload}
+          disabled={isGenerating}
+          aria-busy={isGenerating}
+        >
+          {isGenerating ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              Generating…
+            </>
+          ) : (
+            "Generate Tailored Cover Letter"
+          )}
         </button>
       </div>
     </div>
