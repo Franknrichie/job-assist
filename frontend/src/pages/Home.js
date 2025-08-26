@@ -133,7 +133,6 @@ export default function Home() {
           type="submit"
           form="job-details-form"
           className="btn btn-primary btn-lg px-5 btn-3d"
-          onClick={handleEvaluate}
           disabled={isEvaluating}
           aria-busy={isEvaluating}
         >
