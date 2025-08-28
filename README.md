@@ -4,7 +4,7 @@
 
 **Job Assist** is an AI-powered application that helps users evaluate their fit for specific job opportunities and generate tailored cover letters. It compares a user's resume against a job description using natural language reasoning, then outputs a match score, strengths/weaknesses, a summary of fit, and the option to generate a downloadable cover letter.
 
-## 🚀 Live Application
+## Live Application
 
 - **Frontend**: [https://job-assist-chi.vercel.app](https://job-assist-chi.vercel.app)
 - **Backend API**: [https://job-assist.onrender.com](https://job-assist.onrender.com)
